@@ -1,0 +1,868 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ════════════════════════════════════════════════════════════════
+% THEME FOUNDATION
+% ════════════════════════════════════════════════════════════════
+\usetheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+% ─── CUSTOM COLOR PALETTE ────────────────────────────────────
+\definecolor{midnightblue}{RGB}{12, 44, 88}
+\definecolor{royalblue}{RGB}{28, 88, 160}
+\definecolor{warmorange}{RGB}{240, 108, 20}
+\definecolor{softgreen}{RGB}{15, 140, 70}
+\definecolor{codered}{RGB}{180, 28, 28}
+\definecolor{lavender}{RGB}{100, 80, 200}
+\definecolor{lightbg}{RGB}{247, 249, 255}
+\definecolor{accentyellow}{RGB}{255, 200, 30}
+
+% ─── BEAMER COLOR ASSIGNMENTS ────────────────────────────────
+\setbeamercolor{background canvas}{bg=lightbg}
+\setbeamercolor{frametitle}{bg=midnightblue, fg=white}
+\setbeamercolor{structure}{fg=royalblue}
+\setbeamercolor{item}{fg=warmorange}
+\setbeamercolor{subitem}{fg=royalblue}
+\setbeamercolor{block title}{bg=royalblue, fg=white}
+\setbeamercolor{block body}{bg=royalblue!8, fg=midnightblue}
+\setbeamercolor{alerted text}{fg=warmorange}
+\setbeamercolor{example text}{fg=softgreen}
+\setbeamercolor{normal text}{fg=midnightblue}
+\setbeamerfont{frametitle}{series=\bfseries, size=\large}
+\setbeamerfont{title}{series=\bfseries, size=\Large}
+
+% ─── CUSTOM FRAMETITLE WITH SLIDE NUMBER ─────────────────────
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth, ht=0.6cm, dp=0.2cm, leftskip=0.5cm]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+    \hfill{\footnotesize\color{white!70}\insertframenumber/\inserttotalframenumber\hspace{0.4cm}}
+  \end{beamercolorbox}
+  % Thin orange accent line under title bar
+  \begin{beamercolorbox}[wd=\paperwidth, ht=0.06cm]{frametitle}
+    \color{warmorange}\rule{\paperwidth}{0.06cm}
+  \end{beamercolorbox}
+}
+
+% ─── BULLET STYLE ────────────────────────────────────────────
+\setbeamertemplate{itemize item}{\color{warmorange}\textbf{$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{\color{royalblue}$\triangleright$}
+
+% ════════════════════════════════════════════════════════════════
+% PACKAGES
+% ════════════════════════════════════════════════════════════════
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault]{FiraSans}  % Modern, clean sans-serif font
+\usepackage{FiraMono}             % Matching monospace font
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+\usepackage{listings}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{multicol}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+% Packages used in the Typography Superpowers slide (Slide 21)
+\usepackage[normalem]{ulem}   % \uwave, \uuline, \dashuline, \dotuline
+\usepackage{soul}             % \so (letter-spacing / tracking)
+
+% ─── LISTINGS STYLE ──────────────────────────────────────────
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{midnightblue!6},
+  frame=single, framerule=0pt,
+  rulecolor=\color{royalblue!30},
+  keywordstyle=\color{royalblue}\bfseries,
+  commentstyle=\color{softgreen}\itshape,
+  stringstyle=\color{codered!80},
+  showstringspaces=false, breaklines=true
+}
+
+% ════════════════════════════════════════════════════════════════
+% CALLOUT BOX STYLES  (tcolorbox)
+% ════════════════════════════════════════════════════════════════
+\newtcolorbox{funfact}{
+  enhanced, colback=accentyellow!18, colframe=warmorange!80,
+  fonttitle=\bfseries\small\color{midnightblue},
+  title={$\bigstar$\ \ Fun Fact},
+  arc=6pt, boxrule=1.2pt, left=5pt, right=5pt, top=3pt, bottom=3pt,
+  drop shadow={black!20}
+}
+
+\newtcolorbox{protip}{
+  enhanced, colback=softgreen!10, colframe=softgreen!70,
+  fonttitle=\bfseries\small,
+  title={$\checkmark$\ \ Pro Tip},
+  arc=6pt, boxrule=1.2pt, left=5pt, right=5pt, top=3pt, bottom=3pt,
+  drop shadow={black!20}
+}
+
+\newtcolorbox{quip}{
+  enhanced, colback=lavender!12, colframe=lavender!60,
+  arc=6pt, boxrule=0.8pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  fontupper=\small\itshape\color{midnightblue!90}
+}
+
+\newtcolorbox{errorlog}{
+  enhanced, colback=codered!6, colframe=codered!60,
+  fonttitle=\bfseries\small, coltitle=white, colbacktitle=codered!80,
+  title={$\times$\ Overleaf Error Log (do not panic!)},
+  arc=6pt, boxrule=1pt, left=5pt, right=5pt, top=3pt, bottom=3pt,
+  fontupper=\ttfamily\scriptsize\color{codered!80}
+}
+
+\newtcolorbox{cheatcode}{
+  enhanced, colback=midnightblue!8, colframe=royalblue!60,
+  fonttitle=\bfseries\small,
+  title={$\lightning$\ \ Cheat Code},
+  arc=6pt, boxrule=1pt, left=5pt, right=5pt, top=3pt, bottom=3pt,
+  drop shadow={black!15}
+}
+
+% ─── TikZ STYLES ─────────────────────────────────────────────
+\tikzset{
+  startstop/.style={rectangle, rounded corners, minimum width=2cm,
+    minimum height=0.5cm, text centered, draw=black, fill=red!30},
+  process/.style={rectangle, minimum width=2cm, minimum height=0.5cm,
+    text centered, draw=black, fill=orange!30},
+  arrow/.style={thick, ->, >=Stealth}
+}
+
+% ─── TITLE INFO ──────────────────────────────────────────────
+\title[Mastering \LaTeX]{The End of Formatting Nightmares}
+\subtitle{Mastering \LaTeX\ \& Overleaf for Professional Automation}
+\author{\textbf{Abel Thomas Anil}}
+\date{13 Aug 2026}
+
+\begin{document}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 1 — Title (full-bleed custom layout)                 ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[midnightblue] (current page.south west) rectangle (current page.north east);
+    \fill[warmorange, opacity=0.85]
+      (current page.south east) -- ++(-4.5,0) -- (current page.north east) -- cycle;
+    \fill[royalblue, opacity=0.5]
+      (current page.south east) -- ++(-7,0) -- ++(7,5) -- cycle;
+    % Decorative LaTeX code ghost text
+    \node[text=white, opacity=0.08, font=\ttfamily\footnotesize,
+          anchor=north west] at ([xshift=8pt, yshift=-8pt]current page.north west) {
+      \parbox{5cm}{
+        \textbackslash documentclass\{beamer\}\\
+        \textbackslash usepackage\{amsmath\}\\
+        \textbackslash begin\{document\}\\
+        \ \ \textbackslash maketitle\\
+        \ \ \textbackslash begin\{frame\}\\
+        \ \ \textbackslash end\{frame\}\\
+        \textbackslash end\{document\}
+      }
+    };
+    % Orange accent bracket TikZ art
+    \draw[warmorange!60, line width=3pt] ([xshift=30pt, yshift=-25pt]current page.north west)
+      -- ++(-20pt,0) -- ++(0,-40pt);
+    \draw[royalblue!80, line width=3pt] ([xshift=30pt, yshift=25pt]current page.south west)
+      -- ++(-20pt,0) -- ++(0,40pt);
+  \end{tikzpicture}
+  \vspace{1.8cm}
+  \begin{center}
+    {\color{white}\fontsize{22}{28}\selectfont\bfseries The End of Formatting Nightmares}\\[0.4cm]
+    \color{warmorange}\rule{6cm}{0.5pt}\\[0.4cm]
+    {\color{white!85}\large Mastering \LaTeX\ \& Overleaf for Professional Automation}\\[0.8cm]
+    {\color{warmorange}\Large\textbf{Abel Thomas Anil}}\\[0.2cm]
+    {\color{white!55}\small 13 Aug 2026}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 2 — The Problem                                      ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{We've All Been Here...}
+  \begin{columns}
+    \column{0.6\textwidth}
+      \begin{itemize}
+        \item You spend 40\% of your time writing...
+        \item ...and 60\% fighting with margins, fonts, and floating images.
+        \item Numbering figures manually? Updating a TOC (Table of Contents) by hand?
+        \item MS (Microsoft) Word breaks when you move one image by 1mm.
+      \end{itemize}
+      \vspace{0.3cm}
+      \begin{quip}
+        ``It's 2026. We shouldn't be dragging images around with a mouse and hoping for the best.''
+      \end{quip}
+    \column{0.38\textwidth}
+      % TikZ illustration: a chaotic Word document
+      \begin{center}
+      \begin{tikzpicture}[scale=0.7]
+        % "Page" background
+        \fill[white, draw=gray!40, line width=0.5pt] (0,0) rectangle (4,5.5);
+        % Chaotic text lines
+        \foreach \y in {5, 4.5, 4, 3.5} {
+          \fill[gray!30] (0.3,\y) rectangle (3.7,\y+0.25);
+        }
+        % "Image" block floating weirdly
+        \fill[blue!20, draw=blue!50] (1.5,2.2) rectangle (3.8,3.2);
+        \node[font=\tiny, text=blue!60] at (2.65,2.7) {Image};
+        % Red X warning icons
+        \fill[red!70] (0.1,2.5) circle (0.18);
+        \node[font=\tiny\bfseries, text=white] at (0.1,2.5) {!};
+        % "Broken" text spilling over
+        \fill[gray!30, rotate around={5:(2,1.5)}] (0.3,1.2) rectangle (4.2,1.45);
+        \fill[gray!30, rotate around={-3:(2,0.9)}] (0.3,0.9) rectangle (3.9,1.15);
+        \fill[gray!30] (0.3,0.6) rectangle (2.5,0.85);
+        % label
+        \node[font=\tiny\bfseries, text=codered] at (2,-.3) {A Normal MS (Microsoft) Word Doc};
+      \end{tikzpicture}
+      \end{center}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 3 — The Paradigm Shift                               ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[fragile]{Code Your Documents}
+  \begin{columns}
+    \column{0.48\textwidth}
+      \textbf{\color{midnightblue}You Write:}
+      \vspace{0.2cm}
+      \begin{lstlisting}[language=TeX]
+\section{Introduction}
+This is my \textbf{report}.
+\begin{equation}
+  E = mc^2
+\end{equation}
+      \end{lstlisting}
+    \column{0.48\textwidth}
+      \textbf{\color{midnightblue}LaTeX Produces:}
+      \vspace{0.2cm}
+      % TikZ mock "PDF output" box
+      \begin{tikzpicture}[scale=0.85]
+        \fill[white, draw=gray!40] (0,0) rectangle (4.5,3.5);
+        % Header line
+        \fill[midnightblue!80] (0.2,3.0) rectangle (2.8,3.25);
+        \fill[midnightblue!30] (0.2,2.7) rectangle (4,2.95);
+        % Body text lines
+        \foreach \y in {2.3, 2.0, 1.7} {
+          \fill[gray!25] (0.2,\y) rectangle (3.9,\y+0.18);
+        }
+        % "Equation box"
+        \fill[accentyellow!30, draw=accentyellow!60] (0.8,1.0) rectangle (3.2,1.5);
+        \node[font=\small, text=midnightblue] at (2,1.25) {$E = mc^2$};
+        \node[font=\tiny, text=gray!60] at (2.25,-0.2) {Perfect every time.};
+      \end{tikzpicture}
+  \end{columns}
+  \vspace{0.3cm}
+  \begin{funfact}
+    LaTeX was invented by Donald Knuth in 1978 because he was appalled
+    by how ugly the typeset proofs of his own book looked. Sound relatable?
+  \end{funfact}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 4 — DEMO: The Interface (full-bleed)                 ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[royalblue] (current page.south west) rectangle (current page.north east);
+    \fill[midnightblue, opacity=0.6]
+      (current page.north west) -- (current page.north east) -- ++(0,-2.5) -- ++(-16,0) -- cycle;
+    \fill[warmorange, opacity=0.9]
+      (current page.south west) -- (current page.south east) -- ++(0,1.5) -- ++(-16,0) -- cycle;
+  \end{tikzpicture}
+  \begin{center}
+    \vspace{1.2cm}
+    {\color{white}\fontsize{42}{50}\selectfont\ttfamily\bfseries DEMO TIME}\\[0.4cm]
+    {\color{accentyellow}\fontsize{20}{26}\selectfont The Interface}\\[0.3cm]
+    {\color{white!75}\normalsize Let's Look at the Engine}\\[0.5cm]
+    % Mini keyboard icon in TikZ
+    \begin{tikzpicture}
+      \fill[white, opacity=0.15, rounded corners=3pt] (-1.5,-0.3) rectangle (1.5,0.5);
+      \foreach \x in {-1.2,-0.9,-0.6,-0.3,0,0.3,0.6,0.9,1.2} {
+        \fill[white,opacity=0.5, rounded corners=1pt] (\x-0.1,-0.1) rectangle (\x+0.1,0.3);
+      }
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 5 — Templates                                        ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Stand on the Shoulders of Giants}
+  \begin{itemize}
+    \item You \textbf{never} start from scratch.
+    \item Overleaf has thousands of official publisher templates.
+    \item Change one line: \texttt{\textbackslash documentclass\{ieee\}}
+    \item Entire 50-page document instantly reformats to industry standards.
+  \end{itemize}
+  \vspace{0.4cm}
+  \begin{columns}
+    \column{0.45\textwidth}
+      \begin{block}{Available Templates}
+        IEEE (Institute of Electrical and Electronics Engineers)\\
+        ACM (Association for Computing Machinery)\\
+        Nature $\cdot$ Springer\\
+        Harvard Resume $\cdot$ University Thesis\\
+        Presentations $\cdot$ Posters $\cdot$ CVs (Curriculum Vitae)
+      \end{block}
+    \column{0.5\textwidth}
+      \begin{protip}
+        Open Overleaf $\to$ New Project $\to$ From Template.
+        Search ``IEEE'' and you are ready to publish.
+      \end{protip}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 6 — Auto Numbering                                   ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Never Number Anything Again}
+  \begin{columns}
+    \column{0.55\textwidth}
+      \begin{itemize}
+        \item Use \texttt{\textbackslash label\{\}} and \texttt{\textbackslash ref\{\}}.
+        \item Add a figure on page 10. Refer to it on page 2.
+        \item Add 5 new figures before it?
+          \LaTeX\ renumbers everything --- instantly.
+        \item Zero. Manual. Work.
+      \end{itemize}
+    \column{0.42\textwidth}
+      \begin{funfact}
+        In a 200-page thesis with 60 figures, you would rename each
+        cross-reference \textit{individually} in Word. \\[0.2cm]
+        In \LaTeX: run compile, done.
+      \end{funfact}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 7 — DEMO: Automation in Action                       ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[midnightblue] (current page.south west) rectangle (current page.north east);
+    \fill[softgreen, opacity=0.8]
+      (current page.north west) -- ++(5,0) -- ++(0,-9) -- cycle;
+    \fill[softgreen!60, opacity=0.4]
+      (current page.north west) -- ++(8,0) -- ++(0,-9) -- cycle;
+  \end{tikzpicture}
+  \begin{center}
+    \vspace{1.2cm}
+    {\color{white}\fontsize{42}{50}\selectfont\ttfamily\bfseries DEMO TIME}\\[0.4cm]
+    {\color{accentyellow}\fontsize{20}{26}\selectfont Automation in Action}\\[0.3cm]
+    {\color{white!75}\normalsize Seeing is Believing}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 8 — AI Cheat Codes                                   ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{You Don't Even Need to Learn the Code}
+  People avoid \LaTeX\ because it looks like programming.
+  You don't have to code manually.
+  \vspace{0.3cm}
+  \begin{columns}
+    \column{0.32\textwidth}
+      \begin{tcolorbox}[colback=royalblue!10, colframe=royalblue!60,
+          fonttitle=\bfseries\small, title={TablesGenerator}, arc=5pt, boxrule=0.8pt]
+        {\small Build tables visually like Excel. Copy the generated code.}
+      \end{tcolorbox}
+    \column{0.32\textwidth}
+      \begin{tcolorbox}[colback=softgreen!10, colframe=softgreen!60,
+          fonttitle=\bfseries\small, title={Mathpix Snip}, arc=5pt, boxrule=0.8pt]
+        {\small Screenshot a math equation $\Rightarrow$ instant \LaTeX\ code.}
+      \end{tcolorbox}
+    \column{0.32\textwidth}
+      \begin{tcolorbox}[colback=warmorange!10, colframe=warmorange!60,
+          fonttitle=\bfseries\small, title={AI Prompting}, arc=5pt, boxrule=0.8pt]
+        {\small Tell ChatGPT/Gemini what you need. Paste the result.}
+      \end{tcolorbox}
+  \end{columns}
+  \vspace{0.3cm}
+  \begin{cheatcode}
+    ``Write me a \LaTeX\ table with 3 columns: Name, Age, Score. Add 3 rows of sample data.''
+    \hfill\textit{--- A perfect ChatGPT prompt}
+  \end{cheatcode}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 9 — Math Display                                     ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{The Math Looks Incredible}
+  \textbf{Inline math:} The quadratic formula is $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
+  \vspace{0.3cm}
+
+  \textbf{Display math} (Stokes' Theorem):
+  \begin{equation}
+    \oint_C \mathbf{F} \cdot d\mathbf{r} = \iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S}
+  \end{equation}
+  \vspace{0.1cm}
+  \begin{quip}
+    Type this as code and it compiles to absolute perfection ---
+    no clicking tiny equation editor buttons, no hunting for the $\Sigma$ symbol,
+    no fighting with fraction formatting.
+  \end{quip}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 10 — DEMO: AI & Math                                 ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[lavender!80!midnightblue] (current page.south west) rectangle (current page.north east);
+    \fill[warmorange, opacity=0.6]
+      (current page.south east) -- ++(-6,0) -- (current page.north east) -- cycle;
+  \end{tikzpicture}
+  \begin{center}
+    \vspace{1.2cm}
+    {\color{white}\fontsize{42}{50}\selectfont\ttfamily\bfseries DEMO TIME}\\[0.4cm]
+    {\color{accentyellow}\fontsize{20}{26}\selectfont AI \& Math}\\[0.3cm]
+    {\color{white!75}\normalsize Let's Cheat}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 11 — Package Ecosystem                               ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{The Package Ecosystem}
+  \begin{columns}
+    \column{0.55\textwidth}
+      \begin{itemize}
+        \item \textbf{Full TeX Live:} Every one of the 5,000+ CTAN (Comprehensive \TeX\ Archive Network) packages.
+        \item \textbf{Historical Kernels:} Revert the compiler to 2014 if a package breaks.
+        \item \textbf{Custom Packages:} Upload your own \texttt{.sty} files.
+      \end{itemize}
+      \vspace{0.2cm}
+      \begin{block}{Essential Packages}
+        \small
+        \texttt{geometry} $\cdot$ \texttt{amsmath} $\cdot$ \texttt{graphicx}\\
+        \texttt{biblatex} $\cdot$ \texttt{listings} $\cdot$ \texttt{tikz}
+      \end{block}
+    \column{0.42\textwidth}
+      \begin{funfact}
+        CTAN (Comprehensive \TeX\ Archive Network) hosts over
+        \textbf{6,500 packages} contributed by users worldwide.
+        There is a package for nearly everything.
+      \end{funfact}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 12 — Compilers                                       ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Under the Hood: Compiler Engines}
+  Switch engines in the Overleaf settings menu at any time:
+  \vspace{0.3cm}
+  \begin{columns}
+    \column{0.5\textwidth}
+      \begin{tcolorbox}[colback=royalblue!8, colframe=royalblue!50, arc=4pt,
+          fonttitle=\bfseries\small, title={pdfLaTeX --- Default}]
+        {\small Fastest. Best for text, math, and PNG (Portable Network Graphics) images. Outputs PDF (Portable Document Format).}
+      \end{tcolorbox}
+      \vspace{0.2cm}
+      \begin{tcolorbox}[colback=softgreen!8, colframe=softgreen!50, arc=4pt,
+          fonttitle=\bfseries\small, title={XeLaTeX --- Fonts}]
+        {\small Load any OpenType/TrueType system font.}
+      \end{tcolorbox}
+    \column{0.5\textwidth}
+      \begin{tcolorbox}[colback=lavender!10, colframe=lavender!60, arc=4pt,
+          fonttitle=\bfseries\small, title={LuaLaTeX --- Advanced}]
+        {\small Next-gen engine. Lua scripting, huge bibliographies.}
+      \end{tcolorbox}
+      \vspace{0.2cm}
+      \begin{tcolorbox}[colback=gray!8, colframe=gray!50, arc=4pt,
+          fonttitle=\bfseries\small, title={LaTeX --- Legacy}]
+        {\small Old engine. Outputs .dvi files.}
+      \end{tcolorbox}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 13 — DEMO: The Menu                                  ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[codered!70!midnightblue] (current page.south west) rectangle (current page.north east);
+    \fill[warmorange, opacity=0.5]
+      (current page.north west) -- ++(6,0) -- ++(0,-9) -- cycle;
+  \end{tikzpicture}
+  \begin{center}
+    \vspace{1.2cm}
+    {\color{white}\fontsize{42}{50}\selectfont\ttfamily\bfseries DEMO TIME}\\[0.4cm]
+    {\color{accentyellow}\fontsize{20}{26}\selectfont The Overleaf Menu}\\[0.3cm]
+    {\color{white!75}\normalsize Popping the Hood}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 14 — Collaboration                                   ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Multiplayer Mode \& Review Framework}
+  \begin{itemize}
+    \item \textbf{Real-Time Co-authoring:} Multiple cursors, color-coded per author.
+    \item \textbf{Track Changes:} Accept or reject edits line-by-line.
+    \item \textbf{Margin Comments \& Project Chat.}
+  \end{itemize}
+  \vspace{0.3cm}
+  \begin{quip}
+    Imagine Google Docs, but instead of a messy DOCX file emailed back and forth
+    with ``final\_v3\_REAL\_FINAL\_this\_one.docx,'' you have a live, versioned
+    professional document. That's Overleaf collaboration.
+  \end{quip}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 15 — Version History                                 ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Fearless Editing: The Time Machine}
+  \begin{columns}
+    \column{0.55\textwidth}
+      \begin{itemize}
+        \item Git-like timeline of every compile.
+        \item Roll back to 3:14 PM last Tuesday.
+        \item Label versions: ``Draft 1'', ``Sent to Prof''.
+      \end{itemize}
+      \vspace{0.3cm}
+      \begin{funfact}
+        A student once accidentally deleted their entire Chapter 4
+        one hour before submission. Version History saved them.
+        True story (probably).
+      \end{funfact}
+    \column{0.42\textwidth}
+      % TikZ: timeline of versions
+      \begin{center}
+      \begin{tikzpicture}[font=\scriptsize]
+        \draw[royalblue, thick] (0,0) -- (0,4);
+        \foreach \y/\label in {0.5/v1.0 Draft, 1.5/v1.3 Revision, 2.5/v2.0 Final, 3.5/\textbf{v3.0 Submitted}} {
+          \fill[warmorange] (0,\y) circle (4pt);
+          \node[anchor=west, xshift=6pt] at (0,\y) {\label};
+        }
+        \draw[softgreen, ->, >=Stealth, very thick] (1.5,1.5) -- (1.5,0.5)
+          node[midway, right, text=softgreen] {\tiny restore};
+      \end{tikzpicture}
+      \end{center}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 16 — Integrations                                    ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Your Entire Workflow, Connected}
+  \begin{columns}
+    \column{0.5\textwidth}
+      \begin{tcolorbox}[colback=royalblue!8, colframe=royalblue!50, arc=4pt,
+          fonttitle=\bfseries\small, title={Reference Syncing}]
+        {\small Live APIs (Application Programming Interfaces) with Zotero \& Mendeley.
+        Type \texttt{\textbackslash cite\{\}}, get a perfect bibliography.}
+      \end{tcolorbox}
+      \vspace{0.2cm}
+      \begin{tcolorbox}[colback=midnightblue!8, colframe=midnightblue!40, arc=4pt,
+          fonttitle=\bfseries\small, title={GitHub Sync}]
+        {\small Treat your thesis like a software project.
+        Push and pull with Git.}
+      \end{tcolorbox}
+    \column{0.5\textwidth}
+      \begin{tcolorbox}[colback=softgreen!10, colframe=softgreen!60, arc=4pt,
+          fonttitle=\bfseries\small, title={Direct Journal Submission}]
+        {\small One-click export to IEEE, Springer, Nature portals.
+        No reformatting needed.}
+      \end{tcolorbox}
+      \vspace{0.2cm}
+      \begin{quip}
+        ``Write once, submit anywhere.''
+      \end{quip}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 17 — DEMO: Version History                           ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[softgreen!50!midnightblue] (current page.south west) rectangle (current page.north east);
+    \fill[accentyellow, opacity=0.4]
+      (current page.south) -- ++(-4,0) -- ++(4,6) -- ++(4,-6) -- cycle;
+  \end{tikzpicture}
+  \begin{center}
+    \vspace{1.2cm}
+    {\color{white}\fontsize{42}{50}\selectfont\ttfamily\bfseries DEMO TIME}\\[0.4cm]
+    {\color{accentyellow}\fontsize{20}{26}\selectfont The Time Machine}\\[0.3cm]
+    {\color{white!75}\normalsize Let's Go Back in Time}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 18 — Managing Large Docs                             ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Conquering the 100-Page Thesis}
+  \begin{columns}
+    \column{0.5\textwidth}
+      \begin{itemize}
+        \item Write Chapter 1 in \texttt{ch1.tex}, Chapter 2 in \texttt{ch2.tex}.
+        \item Root file stitches them:
+          \texttt{\textbackslash input\{ch1.tex\}}
+        \item Keeps workspace fast, organized, easy to share.
+      \end{itemize}
+      \vspace{0.2cm}
+      \begin{protip}
+        Only edit the chapter file you are working on.
+        Overleaf only recompiles what changed.
+      \end{protip}
+    \column{0.47\textwidth}
+      % TikZ: file structure tree
+      \begin{center}
+      \begin{tikzpicture}[font=\ttfamily\scriptsize]
+        \node {main.tex} [grow=down, sibling distance=1.7cm]
+          child { node {ch1.tex} }
+          child { node {ch2.tex} }
+          child { node {ch3.tex} }
+          child { node {references.bib} }
+          child { node {images/} };
+      \end{tikzpicture}
+      \end{center}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 19 — TikZ Flowcharts                                 ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Vector-Perfect Graphics with TikZ}
+  You don't need Visio. Draw flowcharts with pure code:
+  \vspace{0.2cm}
+  \begin{center}
+  \begin{tikzpicture}[node distance=1.8cm]
+    \node (start) [startstop] {Start};
+    \node (pro1)  [process, right of=start, xshift=1.5cm] {Process};
+    \node (end)   [startstop, right of=pro1, xshift=1.5cm] {End};
+    \draw [arrow] (start) -- (pro1);
+    \draw [arrow] (pro1)  -- (end);
+  \end{tikzpicture}
+  \end{center}
+  \vspace{0.2cm}
+  \begin{tcolorbox}[colback=royalblue!8, colframe=royalblue!50, arc=4pt,
+      fonttitle=\bfseries\small, title={The Diagram Gallery}]
+    {\small The cheat sheet you are getting today has \textbf{35 different diagram templates}
+    --- flowcharts, circuits, ERDs, Gantt charts, radar plots, and more.
+    Just copy-paste and edit the labels.}
+  \end{tcolorbox}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 20 — DEMO: Diagram Gallery                           ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[warmorange!80!midnightblue] (current page.south west) rectangle (current page.north east);
+    \fill[midnightblue, opacity=0.7]
+      (current page.south west) -- ++(-0,4.5) -- ++(16,0) -- cycle;
+  \end{tikzpicture}
+  \begin{center}
+    \vspace{1.2cm}
+    {\color{white}\fontsize{42}{50}\selectfont\ttfamily\bfseries DEMO TIME}\\[0.4cm]
+    {\color{accentyellow}\fontsize{20}{26}\selectfont The Diagram Gallery}\\[0.3cm]
+    {\color{white!75}\normalsize Behold the Cheat Sheet}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 21 — Pushing the Limits                              ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Pushing the Limits}
+  If it exists in academia or science, Overleaf can render it:
+  \vspace{0.3cm}
+  \begin{columns}
+    \column{0.5\textwidth}
+      \textbf{Chemistry (\texttt{chemfig} / TikZ):}\\[0.3cm]
+      % Fast TikZ benzene ring
+      \begin{tikzpicture}[scale=0.65]
+        \foreach \i in {0,1,2,3,4,5} {
+          \draw[royalblue, thick] ({60*\i}:1) -- ({60*(\i+1)}:1);
+        }
+        \foreach \i in {0,2,4} {
+          \draw[royalblue!60] ({60*\i+30}:0.55) -- ({60*\i+90}:0.55);
+        }
+        \node[font=\scriptsize, text=midnightblue] at (0,-1.5) {Benzene};
+      \end{tikzpicture}
+    \column{0.5\textwidth}
+      \begin{itemize}
+        \item \textbf{Sheet Music:} \texttt{musixtex}\\
+          {\small Renders literal staff notation.}
+        \item \textbf{Chess:} \texttt{skak}\\
+          {\small Full chess boards \& move tracking.}
+        \item \textbf{3D Plots:} \texttt{pgfplots}\\
+          {\small Native 3D surface and scatter plots.}
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 21 — Typography Superpowers                          ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Typography Superpowers: What Word Can't Do}
+  \begin{columns}
+    \column{0.52\textwidth}
+      \begin{itemize}
+        \item \textbf{Micro-typography} (\texttt{microtype}): invisible kerning \& protrusion — zero rivers of white space
+        \item \textbf{Exotic underlines} (\texttt{ulem}): wavy \uwave{~}, double \uuline{~}, dashed \dashuline{~}, dotted \dotuline{~}
+        \item \textbf{Letter-spacing} (\texttt{soul}): \so{TRACKED HEADINGS}
+        \item \textbf{Paragraph shapes} (\texttt{shapepar}): text that fills a {\color{warmorange}\textbf{heart}} or {\color{royalblue}\textbf{diamond}}
+        \item \textbf{Historical fonts} (\texttt{yfonts}): Fraktur, Gothic, Schwabacher
+        \item \textbf{Absolute placement} (\texttt{textpos}): float a box at exact X/Y coordinates
+      \end{itemize}
+    \column{0.45\textwidth}
+      \begin{tcolorbox}[enhanced, colback=midnightblue!8, colframe=royalblue!60,
+          arc=5pt, boxrule=0.8pt,
+          fonttitle=\bfseries\small\color{white},
+          colbacktitle=midnightblue, title={Packages at a glance}]
+        \scriptsize
+        \begin{tabular}{@{}ll@{}}
+          \color{warmorange}\textbullet & \texttt{microtype} — kerning \\
+          \color{warmorange}\textbullet & \texttt{soul} — tracking \& hl \\
+          \color{warmorange}\textbullet & \texttt{ulem} — 6 underlines \\
+          \color{warmorange}\textbullet & \texttt{shapepar} — shaped text \\
+          \color{warmorange}\textbullet & \texttt{yfonts} — gothic fonts \\
+          \color{warmorange}\textbullet & \texttt{calligra} — handwriting \\
+          \color{warmorange}\textbullet & \texttt{tcolorbox} — gradient boxes \\
+          \color{warmorange}\textbullet & \texttt{pifont} — dingbat icons \\
+          \color{warmorange}\textbullet & \texttt{relsize} — relative scaling \\
+          \color{warmorange}\textbullet & \texttt{textpos} — abs. position \\
+        \end{tabular}
+      \end{tcolorbox}
+      \vspace{0.2cm}
+      \begin{funfact}
+        \scriptsize All 10 of these are installed on Overleaf by default. Zero setup needed.
+      \end{funfact}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 22 — DEMO: advanced_text_formatting.tex              ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[midnightblue!90!black] (current page.south west) rectangle (current page.north east);
+    \fill[lavender, opacity=0.15]
+      (current page.north west) -- ++(8,0) -- ++(0,-9) -- cycle;
+  \end{tikzpicture}
+  \begin{center}
+    \vspace{0.8cm}
+    {\color{white}\fontsize{38}{46}\selectfont\ttfamily\bfseries DEMO TIME}\\[0.3cm]
+    {\color{accentyellow}\fontsize{18}{24}\selectfont Typography Superpowers}\\[0.5cm]
+    \begin{tcolorbox}[enhanced, colback=white, opacityback=0.15, colframe=accentyellow!80,
+        arc=6pt, boxrule=1.2pt, width=0.75\textwidth,
+        fontupper=\small\color{white}, center]
+      Open \texttt{advanced\_text\_formatting.tex} in Overleaf\\[0.2cm]
+      \textbf{\color{accentyellow}Point out:} drop caps $\cdot$ sine-wave text $\cdot$ paragraph shapes\\
+      heart \& diamond $\cdot$ Fraktur font $\cdot$ wavy/double underlines\\
+      gradient boxes $\cdot$ drop shadow $\cdot$ dingbat icon bullets\\
+      image wrapping $\cdot$ circular clipping $\cdot$ images inside flowchart nodes
+    \end{tcolorbox}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 23 — Pushing the Limits                              ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Pushing the Limits}
+  \begin{columns}
+    \column{0.5\textwidth}
+      \begin{itemize}
+        \item \textbf{Sheet Music} — the \texttt{musixtex} package
+        \item \textbf{Chemical structures} — \texttt{chemfig}
+        \item \textbf{Circuit diagrams} — \texttt{circuitikz}
+        \item \textbf{Chess boards} — \texttt{skak}
+        \item \textbf{Crossword puzzles} — (Pure \texttt{TikZ})
+        \item \textbf{Rubik's cubes} — (Pure \texttt{TikZ})
+        \item \textbf{Sudoku grids} — \texttt{sudoku}
+        \item \textbf{Linguistic trees} — \texttt{forest}
+      \end{itemize}
+    \column{0.47\textwidth}
+      \begin{quip}
+        If you can describe it mathematically, LaTeX can typeset it. That's the promise the engine was designed to keep.
+      \end{quip}
+      \vspace{0.3cm}
+      \begin{cheatcode}
+        \scriptsize Search CTAN for any niche topic.\\
+        Over \textbf{6,000 packages} are available,\\
+        all pre-installed on Overleaf.
+      \end{cheatcode}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 24 — Debugging                                       ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{How to Debug Like a Pro}
+  \begin{columns}
+    \column{0.55\textwidth}
+      \begin{itemize}
+        \item When Overleaf flashes red, \textbf{don't panic.}
+        \item Ignore the jargon. Find \texttt{l.42} --- that's your broken line!
+        \item \textbf{Undefined control sequence} $\rightarrow$ Typo.
+        \item \textbf{Missing \$ inserted} $\rightarrow$ Math mode.
+        \item \textbf{Runaway argument} $\rightarrow$ Missing \texttt{\}}.
+      \end{itemize}
+    \column{0.42\textwidth}
+      \begin{errorlog}
+        ! Undefined control sequence.\\
+        l.42 \textbackslash textbfs\{hello\}\\[0.2cm]
+        \color{gray!60}! Missing \$ inserted.\\
+        l.67 E = mc\^{}2\\[0.2cm]
+        \color{codered!60}$\rightarrow$ Fix: line 42 typo.
+      \end{errorlog}
+      \vspace{0.2cm}
+      \begin{protip}
+        Copy the red text. Paste into ChatGPT.
+        Ask for the fix. Done.
+      \end{protip}
+  \end{columns}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 23 — DEMO: Let's Break Things                        ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[codered!70!black] (current page.south west) rectangle (current page.north east);
+    \fill[white, opacity=0.06]
+      (current page.north east) -- ++(-5,0) -- ++(0,-9) -- cycle;
+  \end{tikzpicture}
+  \begin{center}
+    \vspace{1.2cm}
+    {\color{white}\fontsize{42}{50}\selectfont\ttfamily\bfseries DEMO TIME}\\[0.4cm]
+    {\color{accentyellow}\fontsize{20}{26}\selectfont Let's Break Things}\\[0.3cm]
+    {\color{white!75}\normalsize Live Debugging}
+  \end{center}
+\end{frame}
+
+% ╔══════════════════════════════════════════════════════════════╗
+% ║  SLIDE 24 — The Final Reveal                                ║
+% ╚══════════════════════════════════════════════════════════════╝
+\begin{frame}{Start Building...}
+  \begin{itemize}
+    \item Go to \textbf{Overleaf.com} and sign up for a free account.
+    \item Open the \textbf{Sample Project} to explore the code.
+    \item Use the \textbf{Diagram Gallery} (35 templates) for your own projects.
+    \item Never use MS (Microsoft) Word for a serious technical report again.
+  \end{itemize}
+  \vspace{0.4cm}
+  \pause
+  \begin{tcolorbox}[enhanced, colback=midnightblue, colframe=warmorange,
+      arc=8pt, boxrule=2pt,
+      fonttitle=\large\bfseries\color{warmorange},
+      title={One more thing...},
+      drop shadow={black!40}]
+    \begin{center}
+      {\color{white}
+      This entire slide deck wasn't made in PowerPoint.\\[0.3cm]
+      I coded it in \LaTeX\ using the \texttt{\color{accentyellow}beamer} package.\\[0.3cm]
+      \textit{\color{white!75}These slides ARE the demo.}}
+    \end{center}
+  \end{tcolorbox}
+\end{frame}
+
+\end{document}

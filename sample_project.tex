@@ -1,0 +1,279 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- PREAMBLE ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}    % Images: \includegraphics
+\usepackage{amsmath}     % Advanced math: align, equation, etc.
+\usepackage{amssymb}     % Extra math symbols
+\usepackage{booktabs}    % Professional tables: \toprule \midrule \bottomrule
+\usepackage{enumitem}    % Control list styles and spacing
+\usepackage{xcolor}      % Colors
+
+% Fix nested itemize: default 2nd level uses ugly em-dashes.
+% Change to open circles, which is clean and standard.
+\setlist[itemize,1]{label=\textbullet}
+\setlist[itemize,2]{label=$\circ$}
+\setlist[itemize,3]{label=$\cdot$}
+
+% hyperref MUST come after most packages
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    filecolor=magenta,
+    urlcolor=blue!70!black,
+    citecolor=green!50!black
+}
+
+% --- TikZ ---
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+
+% --- Code Listings ---
+\usepackage{listings}
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{gray!8},
+    frame=single,
+    framerule=0.4pt,
+    keywordstyle=\color{blue!80!black}\bfseries,
+    commentstyle=\color{green!50!black}\itshape,
+    stringstyle=\color{red!60!black},
+    showstringspaces=false,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=5pt
+}
+
+% --- Data Plots ---
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% --- TikZ Styles (using tikzset, not deprecated tikzstyle) ---
+\tikzset{
+  startstop/.style = {rectangle, rounded corners, minimum width=3cm,
+                      minimum height=1cm, text centered, draw=black, fill=blue!20},
+  process/.style   = {rectangle, minimum width=3cm, minimum height=1cm,
+                      text centered, draw=black, fill=orange!20},
+  decision/.style  = {diamond, minimum width=3cm, minimum height=1cm,
+                      text centered, draw=black, fill=green!20, aspect=2},
+  io/.style        = {trapezium, trapezium left angle=70, trapezium right angle=110,
+                      minimum width=3cm, minimum height=1cm, text centered,
+                      draw=black, fill=yellow!20},
+  database/.style  = {cylinder, shape border rotate=90, aspect=0.25, draw=black,
+                      fill=purple!20, minimum height=1.5cm, minimum width=2cm,
+                      text centered},
+  arrow/.style     = {thick, ->, >=Stealth}
+}
+
+% --- Document Information ---
+\title{Overleaf and \LaTeX\ Seminar: Sample Project}
+\author{Presented by Abel Thomas Anil}
+\date{13 Aug 2026}
+
+% ============================================================
+\begin{document}
+% ============================================================
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+Welcome to the sample \LaTeX\ project! This document demonstrates all the key features discussed in the seminar. \LaTeX\ separates content from formatting, allowing you to focus on \emph{what} you write rather than \emph{how} it looks.
+
+\subsection{Basic Formatting}
+You can easily make text \textbf{bold}, \textit{italic}, \underline{underlined}, or even \textbf{\textit{bold italic}}. \\[0.3cm]
+Use \texttt{texttt} for monospaced/code text, and \textsc{Small Caps} for headings.
+
+% ============================================================
+\section{Lists and Bullet Points}
+% ============================================================
+Here is an example of an unordered list:
+\begin{itemize}
+    \item First point
+    \item Second point with a sub-list:
+    \begin{itemize}
+        \item Sub-point A
+        \item Sub-point B
+    \end{itemize}
+\end{itemize}
+
+Here is a numbered list:
+\begin{enumerate}
+    \item Learn \LaTeX
+    \item Use AI to write \LaTeX\ faster
+    \item ???
+    \item Profit
+\end{enumerate}
+
+% ============================================================
+\section{Mathematics}
+% ============================================================
+Writing math is one of \LaTeX's strongest features.
+
+Inline math: the quadratic formula is $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
+
+Display equations are typeset in their own numbered block:
+\begin{equation}
+    f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi)\,e^{2\pi i \xi x}\,d\xi
+    \label{eq:fourier}
+\end{equation}
+Equation~\ref{eq:fourier} is the inverse Fourier transform.
+
+Aligned multi-line equations:
+\begin{align}
+    \nabla \cdot  \mathbf{E} &= \frac{\rho}{\varepsilon_0} \label{eq:gauss} \\
+    \nabla \times \mathbf{B} &= \mu_0 \mathbf{J} + \mu_0\varepsilon_0 \frac{\partial\mathbf{E}}{\partial t} \label{eq:ampere}
+\end{align}
+Equations~\ref{eq:gauss} and~\ref{eq:ampere} are two of Maxwell's equations.
+
+% ============================================================
+\section{Images and Tables}
+% ============================================================
+
+\subsection{Adding an Image}
+To add an image, upload it to your Overleaf project first, then use:
+\begin{lstlisting}[language=TeX, caption={Image insertion code}]
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/my_photo.png}
+    \caption{This is a sample image caption.}
+    \label{fig:sample}
+\end{figure}
+\end{lstlisting}
+
+% Actual figure (commented out since no image file exists):
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.5\textwidth]{images/sample_image.png}
+%     \caption{This is a sample image.}
+%     \label{fig:sample}
+% \end{figure}
+
+\subsection{Adding a Professional Table}
+Use the \texttt{booktabs} package for clean, publication-quality tables.
+Remember \href{https://www.tablesgenerator.com/}{TablesGenerator.com} or AI to generate code!
+
+\begin{table}[h]
+    \centering
+    \caption{A professional-looking table using \texttt{booktabs}.}
+    \label{tab:my_table}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Item} & \textbf{Quantity} & \textbf{Price (USD)} \\
+        \midrule
+        Apples    & 5 & \$2.00 \\
+        Bananas   & 3 & \$1.50 \\
+        Mangoes   & 2 & \$3.00 \\
+        \midrule
+        \textbf{Total} & \textbf{10} & \textbf{\$6.50} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% ============================================================
+\section{Flowcharts with TikZ}
+% ============================================================
+Here is a flowchart drawn entirely with code using the \texttt{TikZ} package.
+It demonstrates different node shapes and arrow routing types.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[node distance=2.5cm]
+    % Nodes
+    \node (start) [startstop] {Start};
+    \node (in1)   [io, below of=start, yshift=0.5cm] {Input Data};
+    \node (pro1)  [process, below of=in1, yshift=0.5cm] {Process Data};
+    \node (dec1)  [decision, below of=pro1, yshift=-0.5cm] {Valid?};
+    \node (pro2)  [process, right of=dec1, xshift=3cm] {Fix Data};
+    \node (db)    [database, below of=dec1, yshift=-1.2cm] {Save to Database};
+
+    % Arrows
+    \draw [arrow] (start) -- (in1);
+    \draw [arrow] (in1)   -- (pro1);
+    \draw [arrow] (pro1)  -- (dec1);
+    
+    % Labeled arrows
+    \draw [arrow] (dec1) -- node[anchor=east]  {\small Yes} (db);
+    \draw [arrow] (dec1) -- node[anchor=south] {\small No}  (pro2);
+    
+    % Right-angled feedback loop
+    \draw [arrow] (pro2) |- (pro1);
+    
+    % Curved restart arrow
+    \draw [arrow] (db) to[bend left=45] node[anchor=east] {\small Restart} (start);
+\end{tikzpicture}
+\caption{Advanced TikZ flowchart with various shapes and arrow types.}
+\label{fig:flowchart}
+\end{figure}
+
+% ============================================================
+\section{Advanced Features: Code and Plots}
+% ============================================================
+
+\subsection{Displaying Code}
+You can format source code beautifully using the \texttt{listings} package.
+It supports syntax highlighting for over 80 programming languages.
+
+\begin{lstlisting}[language=Python, caption={Python Example with \texttt{listings}}]
+def hello_world(name: str) -> None:
+    """Greet someone by name."""
+    print(f"Welcome to the Masterclass, {name}!")
+
+# Call the function
+hello_world("Abel")
+\end{lstlisting}
+
+\begin{lstlisting}[language=C, caption={C Example}]
+#include <stdio.h>
+
+int main() {
+    printf("Hello from C!\n");
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{Plotting Data}
+Using \texttt{pgfplots}, we can draw graphs natively---no Excel screenshots required!
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    title={Simple Data Plot},
+    xlabel={X Axis},
+    ylabel={Y Axis},
+    grid=major,
+    width=0.75\textwidth,
+    legend pos=north west
+]
+\addplot[color=red!70, mark=*, thick] coordinates {
+    (0,0) (1,2) (2,1) (3,4) (4,3) (5,5)
+};
+\addplot[color=blue!70, mark=square*, thick] coordinates {
+    (0,1) (1,1.5) (2,2.5) (3,3) (4,4) (5,4.5)
+};
+\legend{Series A, Series B}
+\end{axis}
+\end{tikzpicture}
+\caption{A line graph with two series, generated natively in \LaTeX.}
+\label{fig:plot}
+\end{figure}
+
+% ============================================================
+\section{Citations}
+% ============================================================
+Managing references is fully automatic. For example, we might want to cite a famous paper by Einstein~\cite{einstein1905}.
+You just need to have the entry in your \texttt{references.bib} file and use \texttt{\textbackslash cite\{key\}}.
+\LaTeX\ and \texttt{biblatex} handle all the formatting and bibliography generation.
+
+% --- BIBLIOGRAPHY ---
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
