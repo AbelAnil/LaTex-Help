@@ -1,0 +1,621 @@
+\documentclass[11pt, a4paper]{article}
+
+% --- PACKAGES ---------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{microtype}
+\emergencystretch=1em
+\usepackage{enumitem}
+\setlist{itemsep=2pt, topsep=4pt}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable, listings}
+\usepackage{hyperref} % keep last
+
+% --- HYPERREF ---------------------------------------------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    urlcolor=red!70!black,
+    pdftitle={Mastering Overleaf and LaTeX: Comprehensive Study Guide},
+    bookmarksopen=true
+}
+
+% --- BOXES ------------------------------------------------------
+\newtcolorbox{conceptbox}[1]{
+    enhanced, breakable,
+    colback=blue!5!white, colframe=blue!80!black,
+    title={\textbf{#1}},
+    attach boxed title to top left={xshift=5mm, yshift=-3mm},
+    boxed title style={colback=blue!80!black, arc=4pt},
+    top=4mm, bottom=2mm, left=2mm, right=2mm, arc=4pt
+}
+
+% Listing box: content is shown verbatim, so no escaping is needed.
+\newtcblisting{codebox}[1][Code Example]{
+    enhanced, breakable,
+    colback=gray!5!white, colframe=gray!60!black,
+    title={\textbf{#1}},
+    attach boxed title to top left={xshift=5mm, yshift=-3mm},
+    boxed title style={colback=gray!60!black, arc=4pt},
+    top=4mm, bottom=2mm, left=2mm, right=2mm, arc=4pt,
+    listing only,
+    listing options={basicstyle=\ttfamily\small, columns=fullflexible,
+                     keepspaces=true, breaklines=true}
+}
+
+\newtcolorbox{probox}[1][Pro Tip]{
+    enhanced, breakable,
+    colback=yellow!10!white, colframe=orange!80!black,
+    title={\textbf{#1}},
+    attach boxed title to top center={yshift=-3mm},
+    boxed title style={colback=orange!80!black, arc=4pt},
+    top=4mm, bottom=2mm, left=2mm, right=2mm, arc=4pt
+}
+
+\newtcolorbox{warnbox}[1][Common Mistake]{
+    enhanced, breakable,
+    colback=red!5!white, colframe=red!70!black,
+    title={\textbf{#1}},
+    attach boxed title to top left={xshift=5mm, yshift=-3mm},
+    boxed title style={colback=red!70!black, arc=4pt},
+    top=4mm, bottom=2mm, left=2mm, right=2mm, arc=4pt
+}
+
+\newcommand{\doclink}[2]{%
+    \vspace{0.2cm}\noindent
+    \textbf{\textcolor{blue}{Official Documentation:}}\ \href{#1}{#2}\par}
+
+% ================================================================
+\begin{document}
+% ================================================================
+
+\begin{center}
+    {\Huge \bfseries Mastering Overleaf \& \LaTeX{}}\\[0.2cm]
+    {\Large \color{gray} The Comprehensive Attendee Study Guide}\\[0.5cm]
+    \rule{\textwidth}{1pt}
+\end{center}
+
+Welcome to the ultimate guide to \LaTeX! This document is your self-paced
+reference after the masterclass. Whether you are writing a research paper,
+formatting a thesis, or building complex diagrams, this guide covers the core
+concepts and the modern ``cheat codes'' to get things done effortlessly.
+
+\vspace{0.2cm}
+\tableofcontents
+\vspace{0.5cm}
+\noindent\rule{\textwidth}{1pt}
+\newpage
+
+% ----------------------------------------------------------------
+\section{What is \LaTeX{} and Overleaf?}
+% ----------------------------------------------------------------
+\begin{conceptbox}{The Basics}
+\begin{itemize}
+    \item \textbf{\LaTeX{} (pronounced ``Lay-tech'' or ``Lah-tech'')} is a markup
+    language for document preparation. Unlike Microsoft Word, where you drag
+    images and fight with formatting, \LaTeX{} separates \textit{content} from
+    \textit{design}. You write text with structural commands, and \LaTeX{}
+    compiles it into a cleanly formatted PDF.
+    \item \textbf{Overleaf} is the modern way to use \LaTeX{}. Think of it as
+    Google Docs for code. It runs entirely in your browser, compiles your PDF
+    next to your source, and supports real-time collaboration.
+\end{itemize}
+\end{conceptbox}
+
+\doclink{https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes}{Learn LaTeX in 30 Minutes}
+
+% ----------------------------------------------------------------
+\section{Document Structure}
+% ----------------------------------------------------------------
+Every \LaTeX{} document is split into two parts:
+\begin{enumerate}
+    \item \textbf{The Preamble:} The setup area at the top. Here you define the
+    document class (like \texttt{article}, \texttt{report} or \texttt{book})
+    and load packages (add-ons such as \texttt{graphicx} for images).
+    \item \textbf{The Body:} The content, between \verb|\begin{document}| and
+    \verb|\end{document}|.
+\end{enumerate}
+
+\begin{codebox}
+\documentclass{article}
+\usepackage{graphicx}   % <- preamble
+
+\begin{document}        % <- body starts here
+
+\section{Introduction}
+Hello world! This is my first \textbf{bold} statement.
+
+\end{document}
+\end{codebox}
+
+\begin{conceptbox}{Common document classes}
+\begin{itemize}
+    \item \texttt{article}: short papers, assignments, reports without chapters.
+    \item \texttt{report}: longer documents with chapters.
+    \item \texttt{book}: books, with front/back matter and two-sided layout.
+    \item \texttt{beamer}: slide presentations (see Section~\ref{sec:beamer}).
+    \item \texttt{IEEEtran}, \texttt{acmart}, \texttt{llncs}: publisher templates.
+\end{itemize}
+\end{conceptbox}
+
+\doclink{https://www.overleaf.com/learn/latex/Creating_a_document_in_LaTeX}{Creating a document in LaTeX}
+
+% ----------------------------------------------------------------
+\section{The ``Cheat Codes'': AI and Generators}
+% ----------------------------------------------------------------
+\textbf{The most important lesson of this guide:} nobody memorizes \LaTeX{}
+syntax anymore. Professionals use tools to generate code instantly.
+
+\begin{conceptbox}{Modern Workflow Tools}
+\begin{itemize}
+    \item \textbf{ChatGPT / Claude / Gemini:} If you get a compilation error or
+    need a template, ask an AI. \textit{(Prompt example: ``Give me the \LaTeX{}
+    code for a 3-column table comparing Apple and Android.'')} Always paste the
+    exact error message from the log.
+    \item \textbf{Mathpix Snip:} Screenshot a math equation from any PDF, image
+    or website and it converts it to \LaTeX{} code.
+    \item \textbf{TablesGenerator.com:} An Excel-like interface. Build your table
+    visually, click ``Generate'', and copy the code.
+    \item \textbf{Overleaf Visual Editor:} A Word-like view of your document,
+    handy for quick edits without touching the markup.
+\end{itemize}
+\end{conceptbox}
+
+\begin{probox}
+AI can invent package names or options that do not exist. If a generated
+snippet fails, check the package documentation (\texttt{texdoc <package>} or
+CTAN) before debugging blindly.
+\end{probox}
+
+\doclink{https://www.overleaf.com/learn/latex/Tables}{Tables in LaTeX}
+\doclink{https://www.overleaf.com/learn/latex/Mathematical_expressions}{Mathematical expressions}
+
+% ----------------------------------------------------------------
+\section{Text Formatting, Lists and Structure}
+% ----------------------------------------------------------------
+\begin{conceptbox}{Everyday commands}
+\begin{itemize}
+    \item \verb|\textbf{bold}|, \verb|\textit{italic}|, \verb|\underline{text}|,
+    \verb|\texttt{monospace}|, \verb|\emph{emphasis}|.
+    \item Sizes: \verb|\tiny|, \verb|\small|, \verb|\large|, \verb|\Large|,
+    \verb|\Huge|.
+    \item Structure: \verb|\section|, \verb|\subsection|, \verb|\subsubsection|,
+    \verb|\paragraph|.
+    \item A blank line starts a new paragraph; \verb|\\| forces a line break;
+    \verb|\newpage| starts a new page.
+    \item Special characters need escaping: \verb|\% \& \$ \# \_ \{ \}|.
+    \item Quotes: use \verb|``double''| and \verb|`single'|, never the
+    straight \verb|"| key.
+\end{itemize}
+\end{conceptbox}
+
+\begin{codebox}[Lists]
+\begin{itemize}
+    \item Bullet point
+\end{itemize}
+
+\begin{enumerate}
+    \item Numbered point
+\end{enumerate}
+
+\begin{description}
+    \item[Term] Its definition.
+\end{description}
+\end{codebox}
+
+\begin{probox}
+Prefer \verb|\emph{...}| over \verb|\textit{...}| for emphasis. It adapts
+automatically, so emphasis inside an italic sentence turns upright.
+\end{probox}
+
+% ----------------------------------------------------------------
+\section{Images \& Cross-Referencing}
+% ----------------------------------------------------------------
+In Word, moving an image by 1\,mm can destroy your entire document. In
+\LaTeX{}, placement is controlled by an algorithm, and you give it hints.
+
+\begin{codebox}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{my_photo.jpg}
+    \caption{A beautiful landscape}
+    \label{fig:landscape}
+\end{figure}
+
+As seen in Figure~\ref{fig:landscape}, the mountains are tall.
+\end{codebox}
+
+\begin{probox}
+Notice \verb|\label| and \verb|\ref|. \LaTeX{} renumbers figures automatically
+if you insert another one before it. Use a non-breaking space
+(\verb|Figure~\ref{...}|) so the word and number never split across lines.
+Put \verb|\label| \emph{after} \verb|\caption|, or the number will be wrong.
+\end{probox}
+
+\begin{conceptbox}{Placement specifiers}
+\begin{itemize}
+    \item \texttt{h}: here if possible \quad \texttt{t}: top of page
+    \quad \texttt{b}: bottom \quad \texttt{p}: separate float page.
+    \item \texttt{!} overrides the rules a little; \texttt{H} (package
+    \texttt{float}) forces the exact spot.
+    \item Use \verb|\usepackage{graphicx}| in the preamble, and prefer PDF, PNG
+    or JPG files over other formats.
+\end{itemize}
+\end{conceptbox}
+
+\doclink{https://www.overleaf.com/learn/latex/Inserting_Images}{Inserting Images}
+
+% ----------------------------------------------------------------
+\section{Tables}
+% ----------------------------------------------------------------
+For professional-looking tables, use the \texttt{booktabs} package: no vertical
+lines, and three horizontal rules (\verb|\toprule|, \verb|\midrule|,
+\verb|\bottomrule|).
+
+\begin{codebox}
+\begin{table}[htbp]
+    \centering
+    \caption{Phone comparison}
+    \label{tab:phones}
+    \begin{tabular}{lcc}
+        \toprule
+        Feature & Apple & Android \\
+        \midrule
+        Open source  & No  & Mostly \\
+        Price range  & High & Wide \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\end{codebox}
+
+\noindent The result:
+
+\begin{table}[htbp]
+    \centering
+    \caption{Phone comparison}
+    \label{tab:phones}
+    \begin{tabular}{lcc}
+        \toprule
+        Feature & Apple & Android \\
+        \midrule
+        Open source & No & Mostly \\
+        Price range & High & Wide \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{conceptbox}{Column types}
+\texttt{l} left, \texttt{c} centre, \texttt{r} right, and \texttt{p\{3cm\}} a
+fixed-width column that wraps text. Use \verb|\multicolumn| to span columns
+and \verb|\multirow| (package \texttt{multirow}) to span rows.
+\end{conceptbox}
+
+% ----------------------------------------------------------------
+\section{Writing Mathematics}
+% ----------------------------------------------------------------
+\LaTeX{} is the industry standard in STEM because its mathematical typesetting
+is unmatched. Always load \texttt{amsmath}.
+
+\begin{conceptbox}{Math Environments}
+\begin{itemize}
+    \item \textbf{Inline math:} wrap in single dollar signs. Typing
+    \verb|$E = mc^2$| gives $E = mc^2$ inside a sentence.
+    \item \textbf{Display math:} \verb|\begin{equation}| gives a centred,
+    numbered equation. Use \verb|equation*| for no number.
+    \item \textbf{Multi-line:} use \verb|align| to line equations up at the
+    \verb|&| symbol.
+\end{itemize}
+\end{conceptbox}
+
+\begin{codebox}
+\begin{equation}
+    x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+    \label{eq:quad}
+\end{equation}
+
+\begin{align}
+    f(x)  &= (x+1)^2 \\
+          &= x^2 + 2x + 1
+\end{align}
+\end{codebox}
+
+\noindent The quadratic formula, rendered:
+\begin{equation}
+    x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+    \label{eq:quad}
+\end{equation}
+\noindent Refer to it with \verb|\eqref{eq:quad}|, which prints (\ref{eq:quad}).
+
+\begin{conceptbox}{Handy symbols}
+\begin{itemize}
+    \item Greek: \verb|\alpha \beta \gamma \Delta \Omega| gives
+    $\alpha\ \beta\ \gamma\ \Delta\ \Omega$.
+    \item Operators: \verb|\sum_{i=1}^{n}|, \verb|\int_0^\infty|,
+    \verb|\lim_{x\to 0}|, \verb|\partial|, \verb|\nabla|.
+    \item Relations: \verb|\leq \geq \neq \approx \in \subset|.
+    \item Text inside math: \verb|\text{if } x > 0| (needs \texttt{amsmath}).
+\end{itemize}
+\end{conceptbox}
+
+\doclink{https://www.overleaf.com/learn/latex/Mathematical_expressions}{Mathematical expressions}
+
+% ----------------------------------------------------------------
+\section{Flowcharts and Diagrams (TikZ)}
+% ----------------------------------------------------------------
+How do you get flowcharts into a report?
+\begin{itemize}
+    \item \textbf{The Easy Way:} Draw it in Lucidchart or Draw.io, export a
+    high-resolution PNG (or better, a PDF/SVG converted to PDF), and insert it
+    as an image.
+    \item \textbf{The Pro Way (TikZ):} \texttt{TikZ} is a \LaTeX{} graphics
+    package that draws diagrams with code. It is a vector format, so it stays
+    crisp at any zoom. You can even place photos inside nodes and clip them
+    into circles.
+\end{itemize}
+
+\begin{codebox}[Minimal TikZ flowchart]
+\usepackage{tikz}                    % preamble
+\usetikzlibrary{shapes, arrows.meta, positioning}
+
+\begin{tikzpicture}[node distance=1.6cm,
+    box/.style={draw, rounded corners, minimum width=2.4cm,
+                minimum height=0.9cm, fill=blue!10},
+    >={Stealth}]
+  \node[box] (a) {Write};
+  \node[box, right=of a] (b) {Compile};
+  \node[box, right=of b] (c) {PDF};
+  \draw[->] (a) -- (b);
+  \draw[->] (b) -- (c);
+\end{tikzpicture}
+\end{codebox}
+
+\begin{warnbox}[Compile-time warning]
+Large TikZ drawings are the most common cause of slow compiles. For heavy
+figures, use the \texttt{standalone} class to compile the figure once to a PDF
+and include that PDF as an image, or use the \verb|\tikzexternalize| library.
+\end{warnbox}
+
+\doclink{https://www.overleaf.com/learn/latex/TikZ_package}{TikZ package}
+
+% ----------------------------------------------------------------
+\section{Citations and Bibliography (BibTeX)}
+% ----------------------------------------------------------------
+\begin{conceptbox}{The Magic of BibTeX}
+If you are writing a thesis, BibTeX saves you weeks of work:
+\begin{enumerate}
+    \item Create a file called \texttt{references.bib} in your project.
+    \item On Google Scholar, click ``Cite'', choose ``BibTeX'', and paste that
+    block into your \texttt{.bib} file.
+    \item In your document, type \verb|\cite{Einstein1905}|.
+\end{enumerate}
+\LaTeX{} places the \texttt{[1]} in the text and builds a formatted
+References section at the end.
+\end{conceptbox}
+
+\begin{codebox}[references.bib and usage]
+@article{Einstein1905,
+  author  = {Einstein, Albert},
+  title   = {On the Electrodynamics of Moving Bodies},
+  journal = {Annalen der Physik},
+  year    = {1905}
+}
+
+% In the .tex file, where the references should appear:
+\bibliographystyle{ieeetr}   % or plain, apalike, ...
+\bibliography{references}    % file name without .bib
+\end{codebox}
+
+\begin{probox}
+The modern alternative is \texttt{biblatex} with the \texttt{biber} backend.
+It offers more flexible styles (APA, IEEE, Chicago) and better Unicode
+support. Overleaf supports both.
+\end{probox}
+
+\doclink{https://www.overleaf.com/learn/latex/Bibliography_management_in_LaTeX}{Bibliography management in LaTeX}
+
+% ----------------------------------------------------------------
+\section{Advanced Typography \& Formatting}
+% ----------------------------------------------------------------
+\LaTeX{} can do things that are tedious or impossible in Word:
+\begin{itemize}
+    \item \textbf{Micro-typography:} The \texttt{microtype} package subtly
+    adjusts character spacing so justified text avoids ugly ``rivers'' of white
+    space.
+    \item \textbf{Image control:} Wrap text around images (\texttt{wrapfig}),
+    place images side by side (\texttt{subcaption}), or anchor an image with
+    the \texttt{[H]} specifier (\texttt{float}).
+    \item \textbf{Niche layouts:} Drop caps (\texttt{lettrine}), margin notes
+    (\texttt{marginnote}), and text shaped into diamonds (\texttt{shapepar}).
+    \item \textbf{Page layout:} \texttt{geometry} for margins, \texttt{fancyhdr}
+    for headers and footers, \texttt{multicol} for columns.
+\end{itemize}
+
+% ----------------------------------------------------------------
+\section{Essential Packages at a Glance}
+% ----------------------------------------------------------------
+\begin{center}
+\begin{tabular}{@{}p{0.27\textwidth}p{0.65\textwidth}@{}}
+\toprule
+\textbf{Package} & \textbf{What it does} \\
+\midrule
+\texttt{graphicx}   & Insert images with \verb|\includegraphics|. \\
+\texttt{amsmath}    & Better equations: \texttt{align}, \texttt{cases}, \verb|\text|. \\
+\texttt{booktabs}   & Professional table rules. \\
+\texttt{geometry}   & Set page size and margins. \\
+\texttt{hyperref}   & Clickable links, references and PDF bookmarks. \\
+\texttt{xcolor}     & Colours for text, boxes and backgrounds. \\
+\texttt{tikz}       & Vector diagrams drawn with code. \\
+\texttt{listings}   & Syntax-highlighted source code. \\
+\texttt{minted}     & Higher-quality code highlighting (needs Python Pygments). \\
+\texttt{siunitx}    & Consistent numbers and units, e.g.\ \verb|\SI{9.8}{m/s^2}|. \\
+\texttt{algorithm2e}& Pseudocode and algorithms. \\
+\texttt{subcaption} & Side-by-side sub-figures. \\
+\texttt{fancyhdr}   & Custom headers and footers. \\
+\texttt{csquotes}   & Correct quotation marks (recommended with \texttt{biblatex}). \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{warnbox}[Load order]
+Load \texttt{hyperref} \emph{last} (or nearly last) in the preamble. Loading
+it early can break other packages. Documented exceptions, such as
+\texttt{cleveref}, must come after it.
+\end{warnbox}
+
+% ----------------------------------------------------------------
+\section{Presentations with Beamer}\label{sec:beamer}
+% ----------------------------------------------------------------
+\begin{probox}[Fun Fact]
+The seminar presentation you attended was not made in PowerPoint! It was
+programmed entirely in \LaTeX{} using \texttt{beamer}.
+\end{probox}
+
+\begin{codebox}[Minimal Beamer deck]
+\documentclass{beamer}
+\usetheme{Madrid}               % try Berlin, Warsaw, metropolis...
+\title{My Talk}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Introduction}
+\begin{frame}{Why \LaTeX{}?}
+  \begin{itemize}
+    \item<1-> Beautiful maths
+    \item<2-> Consistent design
+    \item<3-> Version-control friendly
+  \end{itemize}
+\end{frame}
+\end{document}
+\end{codebox}
+
+\noindent The \verb|<1->| overlay syntax reveals items step by step.
+
+% ----------------------------------------------------------------
+\section{Overleaf Features Worth Knowing}
+% ----------------------------------------------------------------
+\begin{conceptbox}{Collaboration and workflow}
+\begin{itemize}
+    \item \textbf{Share:} Invite collaborators by email with edit or view access,
+    or share a read-only link.
+    \item \textbf{Comments and track changes:} Review a draft without editing
+    it directly (availability depends on your plan).
+    \item \textbf{History:} Browse and restore earlier versions of your project.
+    \item \textbf{Templates gallery:} Thesis, journal, CV and poster templates
+    to start from.
+    \item \textbf{Git and GitHub sync:} Available on paid plans, for those who
+    prefer version control outside the browser.
+    \item \textbf{Menu settings:} Choose the compiler (\texttt{pdfLaTeX},
+    \texttt{XeLaTeX}, \texttt{LuaLaTeX}), the TeX Live version, and the main
+    document file.
+\end{itemize}
+\end{conceptbox}
+
+\begin{probox}
+Use \texttt{XeLaTeX} or \texttt{LuaLaTeX} (with the \texttt{fontspec}
+package) when you need system fonts or non-Latin scripts such as Malayalam or
+Hindi. Plain \texttt{pdfLaTeX} cannot use arbitrary system fonts.
+\end{probox}
+
+\begin{codebox}[Splitting a large project]
+% main.tex
+\input{preamble}                 % shared settings
+\begin{document}
+\include{chapters/introduction}  % starts on a new page
+\include{chapters/methods}
+\end{document}
+\end{codebox}
+
+% ----------------------------------------------------------------
+\section{Troubleshooting Common Errors}
+% ----------------------------------------------------------------
+Read the \textbf{Logs and output files} panel in Overleaf. Find the
+\emph{first} error. Later ones are usually a consequence of it.
+
+\begin{center}
+\begin{tabular}{@{}p{0.36\textwidth}p{0.56\textwidth}@{}}
+\toprule
+\textbf{Message} & \textbf{Usual cause and fix} \\
+\midrule
+\verb|Undefined control sequence| & A typo in a command, or the package that
+defines it is not loaded. \\[4pt]
+\verb|Missing $ inserted| & Maths symbols (\verb|^|, \verb|_|) used outside
+math mode. Wrap them in \verb|$...$|. \\[4pt]
+\verb|File 'x.sty' not found| & Wrong or unavailable package name. Check the
+spelling on CTAN. \\[4pt]
+\verb|Runaway argument| / \verb|File ended| & An unmatched \verb|{| or a
+missing \verb|\end{...}|. \\[4pt]
+\verb|Misplaced alignment tab &| & A literal \verb|&| in normal text. Write
+\verb|\&|. \\[4pt]
+\verb|Reference ... undefined| & Compile again; the label may be new or
+misspelled. \\[4pt]
+\verb|Overfull \hbox| & A line is too wide. Rephrase, or allow hyphenation
+with \verb|\-|. \\[4pt]
+\verb|Citation ... undefined| & The \texttt{.bib} key is wrong, or the
+bibliography has not been rebuilt. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{probox}[Debugging trick]
+Comment out half the document with \verb|%| (or the \texttt{comment} package)
+and recompile. If the error disappears, it was in the half you removed. Repeat
+until you find the line.
+\end{probox}
+
+% ----------------------------------------------------------------
+\section{Best Practices}
+% ----------------------------------------------------------------
+\begin{itemize}
+    \item Use \textbf{semantic commands}, e.g.\ \verb|\emph| and
+    \verb|\section|, instead of manual spacing and sizing.
+    \item Define repeated formatting once with \verb|\newcommand|, e.g.
+    \verb|\newcommand{\R}{\mathbb{R}}| (needs \texttt{amssymb}).
+    \item Always use \verb|\label| and \verb|\ref| instead of typing numbers.
+    \item Keep one idea per source line, with \verb|%| comments for sections, so
+    collaborators and version control can follow changes.
+    \item Compile often. A small error is easier to find than fifty at the end.
+    \item Keep figures in a \texttt{figures/} folder and set
+    \verb|\graphicspath{{figures/}}|.
+    \item Do not use \verb|\\| to make vertical space between paragraphs. Use a
+    blank line and \verb|\vspace| if you need more.
+\end{itemize}
+
+% ----------------------------------------------------------------
+\section{Quick Cheat Sheet}
+% ----------------------------------------------------------------
+\begin{codebox}[One-page reference]
+\documentclass[11pt]{article}          % document type
+\usepackage{graphicx,amsmath,booktabs}  % packages
+\title{T}\author{A}\date{\today}\maketitle
+
+\section{Heading}      \subsection{Sub}
+\textbf{b} \textit{i} \texttt{code} \emph{e}
+\begin{itemize}\item a\end{itemize}
+\begin{enumerate}\item a\end{enumerate}
+
+$a^2 + b^2 = c^2$                       % inline math
+\begin{equation}\int_0^1 x\,dx\end{equation}
+
+\includegraphics[width=\textwidth]{f.png}
+\label{x}  \ref{x}  \cite{key}  \footnote{Text}
+\end{codebox}
+
+\vspace{0.5cm}
+\begin{center}
+    \rule{0.6\textwidth}{0.4pt}\\[4pt]
+    {\small\color{gray} Happy typesetting!}
+\end{center}
+
+\end{document}
