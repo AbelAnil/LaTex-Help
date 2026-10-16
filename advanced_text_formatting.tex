@@ -1,7 +1,7 @@
 % ============================================================
 %  ADVANCED TEXT FORMATTING IN LaTeX
 %  A Showcase of What Word Processors Simply Cannot Do
-%  Compile with: pdfLaTeX (all features supported)
+%  Compile with: pdfLaTeX   (budget: well under 10 s total)
 % ============================================================
 \documentclass[11pt,a4paper]{article}
 
@@ -9,92 +9,66 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-% Wider text area, generous margin for marginnote examples
 \usepackage[top=1in, bottom=1in, left=1in, right=2.5cm, marginparwidth=2cm]{geometry}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
 \usepackage{graphicx}
 \usepackage{lipsum}
-\usepackage{hyperref}
-
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue!70!black,
-    urlcolor=red!70!black,
-    pdftitle={Advanced Text Formatting in LaTeX},
-    bookmarksopen=true
-}
 
 % ---- FEATURE PACKAGES ----
-
-% 1. Micro-typography: invisible but transformative
-\usepackage{microtype}
-
-% 2. Multiple columns
+\usepackage[expansion=false]{microtype}       % protrusion on; expansion off for fast compiles
 \usepackage{multicol}
-
-% 3. Absolute positioning
 \usepackage[absolute,overlay]{textpos}
 \setlength{\TPHorizModule}{1cm}
 \setlength{\TPVertModule}{1cm}
-
-% 4. Drop caps
 \usepackage{lettrine}
-
-% 5. TikZ for drawing, paths, and decorations
 \usepackage{tikz}
-\usetikzlibrary{decorations.text, decorations.pathmorphing, shadows, calc}
-
-% 6. Margin notes
+\usetikzlibrary{decorations.text, decorations.pathmorphing, decorations.fractals,
+  shadows, calc, positioning, arrows.meta, shapes.geometric, fit, backgrounds,
+  lindenmayersystems}
 \usepackage{marginnote}
-
-% 7. Text in arbitrary shapes
 \usepackage{shapepar}
-
-% 8. soul: letter-spacing, highlighting, strikethrough, underlining
-\usepackage{soul}
-
-% 9. ulem: wavy, double, dashed underlines (normalem keeps \emph as italic)
-\usepackage[normalem]{ulem}
-
-% 10. tcolorbox: beautiful styled boxes
+\usepackage{soul}                            % tracking, strikethrough, underline
+\usepackage[normalem]{ulem}                  % exotic underlines (normalem keeps \emph italic)
 \usepackage{tcolorbox}
-\tcbuselibrary{skins, breakable, theorems}
-
-% 11. GFS Didot / Old-style figures --- Fraktur/Gothic blackletter font
-\usepackage{yfonts}   % \textfrak{}, \textgoth{}, \textswab{}
-
-% 12. Calligraphic handwriting font
+\tcbuselibrary{skins, breakable, theorems, listings}
+\usepackage{yfonts}
 \usepackage{calligra}
-
-% 13. Relative font sizes
 \usepackage{relsize}
-
-% 14. Dingbats and special symbol fonts
 \usepackage{pifont}
-
-% 15. Advanced footnotes: multiple columns, symbols, etc.
 \usepackage[multiple, symbol*]{footmisc}
-
-% 16. Custom column types for tables
 \usepackage{array, booktabs, colortbl}
-
-% 17. wrapfig: flow text around a figure
 \usepackage{wrapfig}
-\usepackage{float}       % for [H] forced placement
-\usepackage{subcaption}  % for side-by-side subfigures
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{pdfrender}                       % REAL outlined text (stroke + fill)
+\usepackage{fancyhdr}                        % running headers
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18,
+  tick label style={font=\scriptsize}, label style={font=\footnotesize},
+  legend style={font=\scriptsize}}
+\usepackage{bytefield}                       % protocol / register diagrams
+\usepackage{qrcode}                          % pure-TeX QR encoder
 
-% ---- PUSHING THE LIMITS: Niche Specialist Packages ----
-% 18. Sheet music
+% ---- PUSHING THE LIMITS: niche specialist packages ----
 \usepackage{musixtex}
-% 19. Chemical structures
 \usepackage{chemfig}
-% 20. Circuit schematics
 \usepackage{circuitikz}
-% 21. Chess boards
 \usepackage{skak}
-% 22. Crossword puzzles and Rubik's cubes are drawn with pure TikZ below
-%     (rubik.sty and cwpuzzle.sty are not bundled in TeX Live 2025)
-\usetikzlibrary{matrix} % for crossword grid
+
+% hyperref last (best practice)
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!70!black, urlcolor=red!70!black,
+  pdftitle={Advanced Text Formatting in LaTeX}, bookmarksopen=true}
+\pdfstringdefDisableCommands{\def\texttt#1{#1}\def\LaTeX{LaTeX}\def\&{and}}
+
+% ---- HEADERS ----
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\scshape Advanced Text Formatting in \LaTeX}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
 
 % ---- CUSTOM COMMANDS ----
 
@@ -109,6 +83,15 @@
 % Wide tracking via soul
 \sodef\tracked{}{0.15em}{0.4em}{0.4em}
 
+% Robust line-breaking highlighter (word-by-word \colorbox).
+% Replaces soul's \hl, which printed every glyph at the same x-position here.
+\makeatletter
+\newcommand{\hlbox}[2][yellow]{{\def\hl@col{#1}\hl@split#2 \hl@end}}
+\def\hl@split#1 #2\hl@end{%
+  {\setlength{\fboxsep}{1pt}\colorbox{\hl@col}{\strut#1}}%
+  \ifx\relax#2\relax\else\ \hl@split#2\hl@end\fi}
+\makeatother
+
 % Custom tcolorbox style
 \tcbset{
   niche/.style={
@@ -120,17 +103,75 @@
   }
 }
 
-% ---- DOCUMENT META ----
-\title{%
-  \Huge\bfseries Advanced Text Formatting in \LaTeX\\[0.4em]
-  \large\normalfont\textit{What Word Processors Simply Cannot Do}
-}
-\author{}
-\date{}
+% Auto-numbered theorem boxes
+\newtcbtheorem[number within=section]{thm}{Theorem}%
+  {enhanced, colback=blue!4, colframe=blue!65!black, arc=3pt, boxrule=0.6pt,
+   fonttitle=\bfseries, separator sign={.}}{thm}
 
+% Maths helpers
+\newcommand{\dd}{\mathop{}\!\mathrm{d}}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+
+% Python listing style
+\lstdefinestyle{pycode}{language=Python, basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue!70!black}\bfseries, commentstyle=\color{green!45!black}\itshape,
+  stringstyle=\color{orange!80!black}, numbers=left, numberstyle=\tiny\color{gray},
+  numbersep=6pt, showstringspaces=false, breaklines=true, columns=fullflexible}
+
+% L-systems for the fractal section
+\pgfdeclarelindenmayersystem{Sierpinski}{
+  \symbol{X}{\pgflsystemdrawforward}
+  \symbol{Y}{\pgflsystemdrawforward}
+  \rule{X -> Y-X-Y}
+  \rule{Y -> X+Y+X}}
+\pgfdeclarelindenmayersystem{Dragon}{
+  \rule{X -> X+YF+}
+  \rule{Y -> -FX-Y}}
+
+% Rubik's-cube sticker colours
+\newcommand{\cubecol}[1]{\ifcase#1 white\or orange!90!red\or green!70!black\or
+  yellow!90!orange\or red!80!black\or blue!70!white\fi}
+% #1 = 0 solved, 1 scrambled
+\newcommand{\rubik}[1]{%
+  \begin{tikzpicture}[x={(0.866cm,-0.5cm)}, y={(0cm,1cm)}, z={(-0.866cm,-0.5cm)}, scale=0.62]
+  \foreach \i in {0,1,2}{\foreach \j in {0,1,2}{%
+    \pgfmathtruncatemacro{\ka}{mod(0+#1*(\i*2+\j*3+1),6)}%
+    \pgfmathtruncatemacro{\kb}{mod(2+#1*(\i*3+\j+2),6)}%
+    \pgfmathtruncatemacro{\kc}{mod(4+#1*(\i+\j*2+3),6)}%
+    \edef\ca{\cubecol{\ka}}\edef\cb{\cubecol{\kb}}\edef\cc{\cubecol{\kc}}%
+    \fill[\ca, draw=black, line width=0.4pt] (\i,3,\j)--(\i+1,3,\j)--(\i+1,3,\j+1)--(\i,3,\j+1)--cycle;
+    \fill[\cb, draw=black, line width=0.4pt] (\i,\j,3)--(\i+1,\j,3)--(\i+1,\j+1,3)--(\i,\j+1,3)--cycle;
+    \fill[\cc, draw=black, line width=0.4pt] (3,\j,\i)--(3,\j+1,\i)--(3,\j+1,\i+1)--(3,\j,\i+1)--cycle;
+  }}
+  \draw[black, line width=1pt] (0,3,0)--(3,3,0)--(3,3,3)--(0,3,3)--cycle
+    (0,0,3)--(3,0,3)--(3,3,3)--(0,3,3)--cycle (3,0,0)--(3,0,3)--(3,3,3)--(3,3,0)--cycle;
+  \end{tikzpicture}}
+
+% ---- DOCUMENT META ----
 \begin{document}
 
-\maketitle
+% ==============================================================
+%  COVER PAGE  (TikZ overlay: gradient band, translucent discs, chips)
+% ==============================================================
+\begin{titlepage}
+\begin{tikzpicture}[remember picture, overlay]
+  \shade[left color=blue!60!black, right color=teal!70!black, shading angle=45]
+    (current page.north west) rectangle ([yshift=-12cm]current page.north east);
+  \foreach \x/\y/\r/\o in {16/-2/2.2/0.10, 18.5/-6.5/1.4/0.12, 3/-10/1.8/0.08, 11/-10.5/0.9/0.15}
+    \fill[white, opacity=\o] ([xshift=\x cm, yshift=\y cm]current page.north west) circle (\r cm);
+  \node[anchor=south west, text=white, inner sep=0pt]
+    at ([xshift=2.5cm, yshift=-10.4cm]current page.north west)
+    {\parbox{14.5cm}{\fontsize{34}{40}\selectfont\bfseries Advanced Text Formatting in \LaTeX\par
+      \vspace{4mm}\fontsize{15}{18}\selectfont\itshape What Word Processors Simply Cannot Do}};
+  \foreach \t [count=\i from 0] in {Typography, Graphics, Mathematics, Code, Diagrams}
+    \node[draw=blue!60!black, fill=blue!6, rounded corners=6pt, inner xsep=9pt, inner ysep=5pt,
+          font=\small\bfseries, text=blue!60!black]
+      at ([xshift=2.5cm + \i*3cm + 1.2cm, yshift=7cm]current page.south west) {\t};
+  \node[anchor=south west, text=gray] at ([xshift=2.5cm, yshift=3cm]current page.south west)
+    {\small Compiled with pdf\LaTeX{} \textbullet{} \today};
+\end{tikzpicture}
+\end{titlepage}
+
 \tableofcontents
 \newpage
 
@@ -142,9 +183,10 @@
 The \texttt{microtype} package is active throughout this entire document. It performs
 \textbf{three invisible operations} that Word cannot replicate automatically:
 \begin{enumerate}
-  \item \textbf{Font expansion}: characters are scaled 1--2\% wider/narrower to fill lines perfectly.
   \item \textbf{Character protrusion}: punctuation (commas, hyphens) slightly ``hang'' into the margin for optically straight edges.
-  \item \textbf{Kerning refinement}: pair-specific letter spacing is fine-tuned at the glyph level.
+  \item \textbf{Kerning and spacing refinement}: pair-specific letter spacing is fine-tuned at the glyph level.
+  \item \textbf{Font expansion} (switched off here to keep compile time low; enable it with
+        \texttt{expansion=true}): characters are scaled 1--2\% wider or narrower to fill lines perfectly.
 \end{enumerate}
 \end{tcolorbox}
 
@@ -157,17 +199,19 @@ eliminates them entirely --- this paragraph is proof. \lipsum[1][1-5]
 % ==============================================================
 
 The \texttt{soul} package treats text as a stream of letters it can transform individually.
+Highlighting here uses a small custom \verb|\hlbox| macro, because it keeps working inside
+table cells and across line breaks.
 
 \bigskip
 \begin{center}
-\renewcommand{\arraystretch}{2.2}
-\begin{tabular}{>{\bfseries\small}l l}
+\renewcommand{\arraystretch}{1.9}
+\begin{tabular}{>{\bfseries\small}p{3.6cm} p{10.8cm}}
 \toprule
 Feature & Output \\
 \midrule
 Letter-spacing (tracking)  & \so{THIS HEADING IS TRACKED --- PERFECT FOR SMALL CAPS} \\
 Custom wide tracking       & \tracked{Very wide tracked text for dramatic effect} \\
-Highlighted text           & \hl{This sentence is highlighted in yellow by LaTeX.} \\
+Highlighted text           & \hlbox{This sentence is highlighted in yellow by LaTeX, even across line breaks.} \\
 Strikethrough              & \st{This text is struck through} --- useful for change tracking. \\
 Safe underline             & \ul{Soul underlines work correctly across line breaks.} \\
 \bottomrule
@@ -175,21 +219,20 @@ Safe underline             & \ul{Soul underlines work correctly across line brea
 \end{center}
 
 \bigskip
-\noindent Custom highlight color:
-\sethlcolor{cyan!30}
-\hl{This sentence is highlighted in custom cyan.}
-\sethlcolor{yellow}
+\noindent Custom highlight colour:
+\hlbox[cyan!30]{This sentence is highlighted in custom cyan.}\quad
+\hlbox[green!30]{And in green.}\quad \hlbox[orange!35]{And orange.}
 
 % ==============================================================
 \section{ulem Package --- Exotic Underline Styles}
 % ==============================================================
 
-The \texttt{ulem} package gives you six distinct underline styles. Microsoft Word has one.
+The \texttt{ulem} package gives you seven distinct line styles. Microsoft Word has one.
 
 \bigskip
 \begin{center}
-\renewcommand{\arraystretch}{2}
-\begin{tabular}{>{\bfseries\small}l l}
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{>{\bfseries\small}p{3cm} p{11.4cm}}
 \toprule
 Command              & Result \\
 \midrule
@@ -210,12 +253,11 @@ Command              & Result \\
 
 \begin{tcolorbox}[niche=gray, title={Historical Typography}]
 The \texttt{yfonts} package loads authentic historical typefaces from the TeX
-distribution --- no fonts need to be installed. These were the typefaces used in
-the Gutenberg Bible.
+distribution --- no fonts need to be installed. Blackletter is the style of the Gutenberg Bible.
 \end{tcolorbox}
 
 \bigskip
-\noindent\begin{tabular}{>{\bfseries\small}p{3.5cm} p{9cm}}
+\noindent\begin{tabular}{>{\bfseries\small}p{3.5cm} p{10.5cm}}
 \toprule
 Font Name              & Sample \\
 \midrule
@@ -246,11 +288,10 @@ useful for diagonal initial letters. \lipsum[2][1-3]
 \begin{tikzpicture}
   \path [decorate, decoration={
     text along path,
-    text={|\large\bfseries\color{blue!80!black}|~ This text faithfully follows a sine wave. ~},
+    text={|\large\bfseries\color{blue!80!black}|~ This text follows a sine wave. ~},
     text align=center, raise=4pt
-  }] plot[domain=0:8*pi/3, samples=200] (\x, {0.6*sin(deg(\x))});
-  \draw[gray!40, thick] plot[domain=0:8*pi/3, samples=200]
-    (\x, {0.6*sin(deg(\x))});
+  }] plot[domain=0:8*pi/3, samples=24] (\x, {0.6*sin(deg(\x))});
+  \draw[gray!40, thick] plot[domain=0:8*pi/3, samples=24] (\x, {0.6*sin(deg(\x))});
 \end{tikzpicture}
 \end{center}
 
@@ -287,18 +328,20 @@ No external package needed --- a simple TikZ trick creates drop shadows on any t
 \end{center}
 
 % ==============================================================
-\section{Outlined / Stroked Text (TikZ)}
+\section{Outlined / Stroked Text (\texttt{pdfrender})}
 % ==============================================================
+
+The old trick of drawing a box around a node only outlines the \emph{rectangle}.
+\texttt{pdfrender} switches the PDF text-rendering mode itself, so the glyphs get a true
+stroke around a separate fill:
 
 \begin{center}
 \vspace{0.3cm}
-\begin{tikzpicture}
-  \node[inner sep=0pt] (base) at (0,0)
-    {\fontsize{36}{44}\selectfont\bfseries\color{white} OUTLINE};
-  \node[inner sep=0pt, draw=blue!80!black, text=white,
-        line width=1.5pt, rounded corners=2pt]
-    at (base) {\fontsize{36}{44}\selectfont\bfseries\color{blue!80!black} OUTLINE};
-\end{tikzpicture}
+\textpdfrender{TextRenderingMode=FillStroke, FillColor=white, StrokeColor=blue!80!black,
+  LineWidth=1.2pt}{\fontsize{44}{50}\selectfont\bfseries OUTLINE}
+\quad
+\textpdfrender{TextRenderingMode=FillStroke, FillColor=yellow, StrokeColor=red!70!black,
+  LineWidth=0.8pt}{\fontsize{44}{50}\selectfont\bfseries GLOW}
 \vspace{0.3cm}
 \end{center}
 
@@ -306,12 +349,11 @@ No external package needed --- a simple TikZ trick creates drop shadows on any t
 \section{Absolute Positioning (\texttt{textpos})}
 % ==============================================================
 
-% Absolute box placed low-right on THIS section's page — avoids overlap with drop shadow above
-\begin{textblock}{5.5}(13.5, 17.0)
+\begin{textblock}{5.5}(12.5, 21.0)
 \begin{tcolorbox}[colback=orange!10, colframe=orange!80!black,
   title=\small Absolute Placement!, fonttitle=\bfseries\small,
   arc=3pt, boxrule=0.7pt]
-\footnotesize This entire box is placed at coordinates (13.5\,cm, 17\,cm)
+\footnotesize This entire box is placed at coordinates (12.5\,cm, 21\,cm)
 from the top-left corner of the page, completely ignoring normal text flow.
 \end{tcolorbox}
 \end{textblock}
@@ -326,8 +368,6 @@ work similarly, pinned to the current paragraph.
 \section{Text in Geometric Shapes (\texttt{shapepar})}
 % ==============================================================
 
-% NOTE: shapepar needs a generous amount of text to fill the shape.
-% Too little text causes blank pages; the shape is left incomplete.
 \begin{center}
 \heartpar{\color{red!70!black}\small
   In the beginning was the Word, and the Word was with \LaTeX.
@@ -373,7 +413,7 @@ Unlike Word, \LaTeX{} can switch column layouts in the \emph{middle of a page} s
 \section{Relative Font Scaling (\texttt{relsize})}
 % ==============================================================
 
-\texttt{relsize} scales text \textit{relative} to the current font size, meaning it adapts
+\texttt{relsize} scales text \textit{relative} to the current font size, so it adapts
 automatically even if you change the base font size later:
 
 \bigskip
@@ -403,7 +443,7 @@ automatically even if you change the base font size later:
 \textcolor{orange!80!black}{\starbullet} Featured \\[4pt]
 \ding{42} Pointing finger &
 \ding{108} Filled circle &
-\ding{167} Snowflake \\[4pt]
+\ding{167} Card suit \\[4pt]
 \multicolumn{3}{c}{\ding{73}\ding{73}\ding{73}\ding{73} Rating: 4 stars \ding{73}\ding{73}\ding{73}\ding{73}} \\
 \end{tabular}
 \end{center}
@@ -478,7 +518,7 @@ in pure \LaTeX{} code --- no image editor required.
   title=\textbf{Sidebar Accent Box}, fonttitle=\bfseries,
   left=8mm
 ]
-This box has a colored left-sidebar accent strip --- a design pattern common in
+This box has a coloured left-sidebar accent strip --- a design pattern common in
 modern academic slides and technical documentation. Pure code, zero images.
 \end{tcolorbox}
 
@@ -516,7 +556,7 @@ modern academic slides and technical documentation. Pure code, zero images.
 \begin{center}
 \vspace{0.5cm}
 \begin{tikzpicture}
-  \node[inner sep=2pt, fill=black!85, rounded corners=4pt] (box) at (0,0) {
+  \node[inner xsep=10pt, inner ysep=6pt, fill=black!85, rounded corners=4pt] (box) at (0,0) {
     \color{white}\Large\bfseries\tracked{PRECISION TYPOGRAPHY}
   };
   \node[inner sep=4pt, draw=yellow!80, line width=1pt,
@@ -545,19 +585,19 @@ across pages\footnote{This is footnote two --- notice the symbol markers (\dag, 
 instead of numbers.} --- something Word handles very inconsistently.
 
 % ==============================================================
-\section{Custom Column Types in Tables (\texttt{array} + \texttt{colortbl})}
+\section{Custom Column Types and Zebra Tables (\texttt{array} + \texttt{colortbl})}
 % ==============================================================
 
-\texttt{array} lets you define reusable custom column types. Defined once in the preamble,
-they work everywhere in the document:
+\texttt{array} lets you define reusable custom column types. Defined once, they work
+everywhere in the document, and \verb|\rowcolors| stripes any table automatically:
 
 \bigskip
-\newcolumntype{C}[1]{>{\centering\arraybackslash\bfseries}p{#1}}
-\newcolumntype{R}[1]{>{\raggedleft\arraybackslash\color{blue!70!black}}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash\bfseries}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash\color{blue!70!black}}m{#1}}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.6}
-\begin{tabular}{C{3cm} R{3cm} >{\columncolor{green!10}}l}
+\begin{tabular}{C{3cm} R{3cm} >{\columncolor{green!10}}m{3.6cm}}
 \toprule
 \normalfont\textbf{Bold Center} &
 \normalcolor\textbf{Colored Right} &
@@ -568,6 +608,214 @@ Beta    & 48,992  & \ding{51} Passed \\
 Gamma   & 3,141   & \ding{55} Failed \\
 \bottomrule
 \end{tabular}
+\end{center}
+
+\begin{center}
+\rowcolors{2}{blue!8}{white}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lrrr@{}}
+\rowcolor{blue!70!black}\color{white}\bfseries Package & \color{white}\bfseries Lines & \color{white}\bfseries Year & \color{white}\bfseries Used for \\
+\texttt{tikz}      & 11k & 2005 & Graphics \\
+\texttt{tcolorbox} & 14k & 2009 & Boxes \\
+\texttt{pgfplots}  & 30k & 2007 & Plots \\
+\texttt{microtype} & 9k  & 2004 & Spacing \\
+\end{tabular}
+\end{center}
+{\footnotesize Sizes are rough, for illustration only.}
+
+% ==============================================================
+\section{Publication-Grade Mathematics (\texttt{amsmath}, \texttt{mathtools})}
+% ==============================================================
+% DESIGN: equations are semantic (\dd, \abs) so changing a convention is one line;
+% tcolorbox adds highlighting and auto-numbered theorem boxes with no extra packages.
+
+A displayed equation can be framed with \verb|\tcbhighmath|, and macros such as
+\verb|\dd| keep the upright differential consistent everywhere:
+\[ \tcbhighmath[colback=yellow!15, colframe=orange!70!black, boxrule=0.8pt, arc=3pt]{%
+   e^{i\pi} + 1 = 0 } \]
+
+\begin{align}
+  \int_{-\infty}^{\infty} e^{-x^{2}} \dd x &= \sqrt{\pi}, &
+  \sum_{n=1}^{\infty} \frac{1}{n^{2}} &= \frac{\pi^{2}}{6}, \\
+  \zeta(s) &= \sum_{n=1}^{\infty} \frac{1}{n^{s}} = \prod_{p\ \text{prime}} \frac{1}{1-p^{-s}}, &
+  \hat f(\xi) &= \int_{\mathbb{R}} f(x)\, e^{-2\pi i x\xi} \dd x.
+\end{align}
+
+Maxwell's equations, aligned on the relation symbols, and a piecewise function:
+\begin{align*}
+  \nabla\cdot\mathbf{E} &= \frac{\rho}{\varepsilon_0}, &
+  \nabla\times\mathbf{E} &= -\frac{\partial\mathbf{B}}{\partial t}, \\
+  \nabla\cdot\mathbf{B} &= 0, &
+  \nabla\times\mathbf{B} &= \mu_0\!\left(\mathbf{J} + \varepsilon_0\frac{\partial\mathbf{E}}{\partial t}\right).
+\end{align*}
+\[
+  R(\theta)=\begin{pmatrix}\cos\theta & -\sin\theta\\ \sin\theta & \cos\theta\end{pmatrix},
+  \qquad
+  \abs{x} = \begin{cases} x & x \ge 0,\\ -x & x < 0. \end{cases}
+\]
+
+\begin{thm}{Euclid}{euclid}
+There are infinitely many prime numbers.
+\end{thm}
+\begin{proof}
+Suppose $p_1,\dots,p_n$ were all the primes and let $N=p_1p_2\cdots p_n+1$. Dividing $N$ by
+any $p_i$ leaves remainder $1$, so every prime factor of $N$ is missing from the list.
+\end{proof}
+
+% ==============================================================
+\section{Data Visualisation (\texttt{pgfplots})}
+% ==============================================================
+% DESIGN: plots are drawn from formulas / coordinate lists at compile time, so fonts and
+% colours match the document. Low sample counts keep the compile fast.
+
+\begin{center}
+\begin{minipage}[t]{0.48\textwidth}
+\begin{tikzpicture}
+\begin{axis}[width=\linewidth, height=5.4cm, domain=0:6.3, samples=40, grid=major,
+  grid style={dashed, gray!30}, xlabel={$t$}, legend pos=north east]
+\addplot[thick, blue!70!black]{sin(deg(x))};
+\addplot[thick, red!70!black, dashed]{exp(-x/3)*cos(deg(3*x))};
+\legend{$\sin t$, $e^{-t/3}\cos 3t$}
+\end{axis}
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\begin{tikzpicture}
+\begin{axis}[ybar, width=\linewidth, height=5.4cm, ymin=0, ymax=60,
+  symbolic x coords={00h,04h,08h,12h,16h,20h}, xtick=data, bar width=9pt,
+  enlarge x limits=0.15, ylabel={Failed logins}, ymajorgrids, grid style={dashed, gray!30},
+  nodes near coords, nodes near coords style={font=\tiny},
+  extra y ticks={25}, extra y tick labels={},
+  extra y tick style={grid=major, grid style={red!70, dashed, thick}}]
+\addplot[fill=blue!55!black, draw=none] coordinates
+  {(00h,4) (04h,9) (08h,12) (12h,6) (16h,48) (20h,15)};
+\end{axis}
+\end{tikzpicture}
+\end{minipage}
+\end{center}
+{\footnotesize Left: two functions from formulas. Right: illustrative data; the red line marks
+an alert threshold.}
+
+% ==============================================================
+\section{Syntax-Highlighted Code (\texttt{listings} + \texttt{tcolorbox})}
+% ==============================================================
+% DESIGN: a listing style is defined once in the preamble; each box only names it,
+% so every snippet in the document looks identical.
+
+\begin{tcblisting}{listing only, enhanced, colback=gray!4, colframe=gray!60, arc=3pt,
+  boxrule=0.5pt, title=\texttt{detector.py}, fonttitle=\small\bfseries,
+  listing options={style=pycode}}
+from collections import defaultdict, deque
+import time
+
+WINDOW, THRESHOLD = 60, 5            # seconds, failed attempts
+attempts = defaultdict(deque)
+
+def record_failure(ip, now=None):
+    """Return True when `ip` should be blocked."""
+    now = now or time.time()
+    q = attempts[ip]
+    q.append(now)
+    while q and now - q[0] > WINDOW:  # drop stale events
+        q.popleft()
+    return len(q) >= THRESHOLD
+\end{tcblisting}
+
+% ==============================================================
+\section{Diagrams as Code: Pipelines and Venn Sets (TikZ)}
+% ==============================================================
+% DESIGN: nodes are placed relative to each other (positioning library), so adding a
+% stage never needs coordinates to be recalculated; \texttt{fit} draws the group frame.
+
+\begin{center}
+\begin{tikzpicture}[node distance=9mm and 12mm, >={Stealth[length=2.2mm]},
+  box/.style={draw=#1!70!black, fill=#1!10, rounded corners=3pt, minimum height=9mm,
+    minimum width=21mm, align=center, font=\small\bfseries},
+  flow/.style={->, thick, gray!70!black}]
+  \node[box=gray]   (src)   {Log\\sources};
+  \node[box=blue,   right=of src]   (parse) {Parser};
+  \node[box=orange, right=of parse] (det)   {Detector};
+  \node[box=red,    right=of det]   (act)   {Alert /\\Block};
+  \node[box=teal,   below=of det]   (store) {Event\\store};
+  \draw[flow] (src) -- (parse);
+  \draw[flow] (parse) -- (det);
+  \draw[flow] (det) -- (act) node[midway, above, font=\scriptsize] {verdict};
+  \draw[flow] (parse) |- (store);
+  \draw[flow, <->] (det) -- (store);
+  \begin{scope}[on background layer]
+    \node[draw=blue!40, dashed, rounded corners=5pt, fill=blue!3, inner sep=5mm,
+      fit=(parse)(det)(store), label={[font=\scriptsize\itshape]above:Analysis engine}] {};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+\begin{minipage}[c]{0.52\textwidth}
+Sets overlap in a way no table can show. The security ``CIA triad'' is the classic
+three-circle Venn diagram: a system is \emph{secure} only where all three goals meet.
+Circle fills use \texttt{fill opacity}, so the overlaps mix colours automatically.
+\end{minipage}\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.85]
+  \begin{scope}[fill opacity=0.45]
+    \fill[red!70]            (90:0.9)  circle (1.5);
+    \fill[blue!70]           (210:0.9) circle (1.5);
+    \fill[green!60!black]    (330:0.9) circle (1.5);
+  \end{scope}
+  \node[font=\scriptsize\bfseries] at (90:1.75)  {Confidentiality};
+  \node[font=\scriptsize\bfseries] at (205:1.85) {Integrity};
+  \node[font=\scriptsize\bfseries] at (335:1.85) {Availability};
+  \node[font=\scriptsize\bfseries, fill=white, rounded corners=2pt, inner sep=2pt] at (0,0) {Secure};
+\end{tikzpicture}
+\end{minipage}
+
+% ==============================================================
+\section{Protocol Diagrams (\texttt{bytefield})}
+% ==============================================================
+% DESIGN: the header is described field-by-field with its bit widths, so the drawing
+% cannot drift out of sync with the specification.
+
+\begin{center}
+\begin{bytefield}[bitwidth=0.95em]{32}
+  \bitheader{0,15,16,31} \\
+  \bitbox{16}{Source Port} & \bitbox{16}{Destination Port} \\
+  \bitbox{32}{Sequence Number} \\
+  \bitbox{32}{Acknowledgment Number} \\
+  \bitbox{4}{\tiny Offset} & \bitbox{6}{\tiny Reserved} &
+  \bitbox{1}{\tiny U} & \bitbox{1}{\tiny A} & \bitbox{1}{\tiny P} &
+  \bitbox{1}{\tiny R} & \bitbox{1}{\tiny S} & \bitbox{1}{\tiny F} &
+  \bitbox{16}{Window Size} \\
+  \bitbox{16}{Checksum} & \bitbox{16}{Urgent Pointer} \\
+  \wordbox{1}{Options and padding (variable length)}
+\end{bytefield}
+\end{center}
+\begin{center}\small\itshape A TCP header, drawn from its field widths.\end{center}
+
+% ==============================================================
+\section{Fractals from Rewriting Rules (TikZ)}
+% ==============================================================
+% DESIGN: each curve is a tiny grammar (axiom + rules) expanded at compile time; the
+% order is capped at a level that still looks sharp but compiles in a fraction of a second.
+
+\begin{center}
+\begin{minipage}[b]{0.32\textwidth}\centering
+\begin{tikzpicture}[scale=0.62]
+  \draw[blue!70!black, thick] decorate[decoration=Koch snowflake]{decorate{decorate{
+    (0,0) -- ++(60:4) -- ++(-60:4) -- cycle}}};
+\end{tikzpicture}\\[2pt]\small Koch snowflake
+\end{minipage}\hfill
+\begin{minipage}[b]{0.32\textwidth}\centering
+\begin{tikzpicture}
+  \draw[red!70!black, line width=0.4pt] lindenmayer system
+    [l-system={Sierpinski, axiom=X, order=5, step=3.5pt, angle=60}];
+\end{tikzpicture}\\[2pt]\small Sierpinski triangle
+\end{minipage}\hfill
+\begin{minipage}[b]{0.32\textwidth}\centering
+\begin{tikzpicture}
+  \draw[green!40!black, line width=0.4pt] lindenmayer system
+    [l-system={Dragon, axiom=FX, order=8, step=3.6pt, angle=90}];
+\end{tikzpicture}\\[2pt]\small Dragon curve
+\end{minipage}
 \end{center}
 
 % ==============================================================
@@ -621,30 +869,21 @@ Instead of cropping images in an external editor, you can clip them directly in 
 
 \begin{center}
 \begin{tikzpicture}
-  % Draw a circular clipping path
   \clip (0,0) circle (2.2cm);
-  % Insert the image node inside the clipped area
   \node at (0,0) {\includegraphics[width=6cm]{example-image-a}};
 \end{tikzpicture}
 \end{center}
 
 \subsection*{5. Images inside Flowcharts (TikZ)}
-You can seamlessly integrate images directly into flowchart nodes. This allows for stunning architecture diagrams or process flows with embedded screenshots or photos, connecting them with standard arrows.
+You can integrate images directly into flowchart nodes, which suits architecture diagrams or process flows with embedded screenshots or photos.
 
 \begin{center}
-\begin{tikzpicture}[node distance=4cm]
-  % Node 1: Circular clipped image using path picture
+\begin{tikzpicture}[node distance=4.6cm]
   \node (input) [circle, draw=blue!70, line width=2pt, minimum size=3cm, path picture={
     \node at (path picture bounding box.center) {\includegraphics[height=3cm]{example-image-a}};
   }] {};
-  
-  % Node 2: Standard text node
   \node (process) [right of=input, rectangle, draw=gray, fill=gray!10, rounded corners, inner sep=10pt, font=\bfseries] {Image Processing};
-  
-  % Node 3: Rectangular image node
   \node (output) [right of=process, draw=black, dashed, line width=1pt, inner sep=2pt] {\includegraphics[width=2.5cm]{example-image-b}};
-
-  % Connecting arrows
   \draw[->, >=stealth, line width=1.5pt, blue!70] (input) -- (process) node[midway, above, font=\small\itshape, text=black] {Raw Data};
   \draw[->, >=stealth, line width=1.5pt, gray] (process) -- (output) node[midway, above, font=\small\itshape, text=black] {Result};
 \end{tikzpicture}
@@ -657,8 +896,7 @@ You can seamlessly integrate images directly into flowchart nodes. This allows f
 
 \begin{tcolorbox}[niche=purple, title={The Big Reveal}]
 These are things virtually no one expects a text document to be able to produce from
-\textbf{pure code} with zero external image files. All of these compile natively on Overleaf
-with a single \texttt{\textbackslash usepackage\{\}} declaration.
+\textbf{pure code}. Each one is a single \texttt{\textbackslash usepackage\{\}} declaration.
 \end{tcolorbox}
 
 % ------------------------------------------------------------------
@@ -684,23 +922,13 @@ time signatures, slurs, and dynamics --- all from code:
 % ------------------------------------------------------------------
 \subsection*{Chemical Structures (\texttt{chemfig})}
 % ------------------------------------------------------------------
-\texttt{chemfig} draws 2D structural formulae from a SMILES-like syntax.
-From simple benzene to complex alkaloids --- all in native \LaTeX{}:
+\texttt{chemfig} draws 2D structural formulae from a compact bond-and-atom syntax:
 
 \begin{center}
 \renewcommand{\arraystretch}{1}
-\begin{tabular}{cc}
-% Benzene ring
-\chemfig{*6(-=-=-=)}
-&
-% Caffeine skeleton (simplified)
-\chemfig{
-  H_3C-N*5(
-    -C(=O)-N(-CH_3)-C(=O)-N(-CH_3)-
-  )
-}
-\\[0.4cm]
-\small Benzene & \small Caffeine (simplified)
+\begin{tabular}{ccc}
+\chemfig{*6(-=-=-=)} & \chemfig{H_3C-C(=[1]O)-OH} & \chemfig{H_3C-CH_2-OH} \\[0.4cm]
+\small Benzene & \small Acetic acid & \small Ethanol
 \end{tabular}
 \end{center}
 
@@ -711,17 +939,14 @@ From simple benzene to complex alkaloids --- all in native \LaTeX{}:
 
 \begin{center}
 \begin{circuitikz}[scale=0.85, transform shape]
-  % RC circuit with voltage source
   \draw (0,0)
     to[V, v=$V_s$, invert] (0,3)
     to[R, l=$R$] (3,3)
     to[C, l=$C$] (3,0)
     -- (0,0);
-  % Voltmeter across capacitor
   \draw (3,3) to[short] (5,3)
     to[voltmeter, l=$V_C$] (5,0)
     to[short] (3,0);
-  % Ground symbol
   \draw (0,0) node[ground]{};
 \end{circuitikz}
 \end{center}
@@ -729,8 +954,8 @@ From simple benzene to complex alkaloids --- all in native \LaTeX{}:
 % ------------------------------------------------------------------
 \subsection*{Chess Boards (\texttt{skak})}
 % ------------------------------------------------------------------
-\texttt{skak} renders full 8$\times$8 chessboards with proper piece glyphs, highlights, and
-move annotations. You feed it standard algebraic notation (PGN) and it computes the position:
+\texttt{skak} renders full 8$\times$8 chessboards with proper piece glyphs. You feed it
+standard algebraic notation and it computes the position:
 
 \begin{center}
 \newgame
@@ -744,185 +969,57 @@ move annotations. You feed it standard algebraic notation (PGN) and it computes 
 % ------------------------------------------------------------------
 \subsection*{Crossword Puzzles (Pure TikZ)}
 % ------------------------------------------------------------------
-A crossword grid with numbered squares, black cells, and solution letters
---- drawn entirely with TikZ, no helper macros needed:
+A crossword grid with numbered squares, drawn from a list of cells. The grid below is
+consistent with its clues:
 
 \begin{center}
-\begin{tikzpicture}[scale=0.62]
-  % ── Grid background ──
-  \fill[gray!15] (0,0) rectangle (7,5);
-
-  % ── Black cells ──
-  \fill[black!85] (5,4) rectangle (7,5);   % row 4 cols 5-6
-  \fill[black!85] (1,3) rectangle (2,4);   % row 3 col 1
-  \fill[black!85] (3,3) rectangle (4,4);   % row 3 col 3
-  \fill[black!85] (5,2) rectangle (6,3);   % row 2 col 5
-  \fill[black!85] (1,1) rectangle (2,2);   % row 1 col 1
-  \fill[black!85] (3,1) rectangle (4,2);   % row 1 col 3
-  \fill[black!85] (5,1) rectangle (6,2);   % row 1 col 5
-
-  % ── White cells with borders (row,col explicit) ──
-  % Row 4
-  \foreach \c in {0,1,2,3,4} { \fill[white] (\c,4) rectangle (\c+1,5); \draw[black,line width=0.5pt] (\c,4) rectangle (\c+1,5); }
-  % Row 3
-  \foreach \c in {0,2,4,5,6} { \fill[white] (\c,3) rectangle (\c+1,4); \draw[black,line width=0.5pt] (\c,3) rectangle (\c+1,4); }
-  % Row 2
-  \foreach \c in {0,1,2,3,4,6} { \fill[white] (\c,2) rectangle (\c+1,3); \draw[black,line width=0.5pt] (\c,2) rectangle (\c+1,3); }
-  % Row 1
-  \foreach \c in {0,2,4,6} { \fill[white] (\c,1) rectangle (\c+1,2); \draw[black,line width=0.5pt] (\c,1) rectangle (\c+1,2); }
-  % Row 0
-  \foreach \c in {0,1,2,3,4,5,6} { \fill[white] (\c,0) rectangle (\c+1,1); \draw[black,line width=0.5pt] (\c,0) rectangle (\c+1,1); }
-
-  % ── Clue numbers (tiny, top-left corner) ──
-  \node[anchor=north west,font=\tiny\bfseries] at (0.05,4.95) {1};
-  \node[anchor=north west,font=\tiny\bfseries] at (1.05,4.95) {2};
-  \node[anchor=north west,font=\tiny\bfseries] at (4.05,3.95) {3};
-  \node[anchor=north west,font=\tiny\bfseries] at (5.05,3.95) {4};
-  \node[anchor=north west,font=\tiny\bfseries] at (0.05,2.95) {5};
-
-  % ── Letters ──
-  % Row 4
-  \node[font=\small\bfseries] at (0.5,4.5) {L};
-  \node[font=\small\bfseries] at (1.5,4.5) {A};
-  \node[font=\small\bfseries] at (2.5,4.5) {T};
-  \node[font=\small\bfseries] at (3.5,4.5) {E};
-  \node[font=\small\bfseries] at (4.5,4.5) {X};
-  % Row 3
-  \node[font=\small\bfseries] at (0.5,3.5) {I};
-  \node[font=\small\bfseries] at (2.5,3.5) {Y};
-  \node[font=\small\bfseries] at (4.5,3.5) {P};
-  \node[font=\small\bfseries] at (5.5,3.5) {D};
-  \node[font=\small\bfseries] at (6.5,3.5) {F};
-  % Row 2
-  \node[font=\small\bfseries] at (0.5,2.5) {N};
-  \node[font=\small\bfseries] at (1.5,2.5) {U};
-  \node[font=\small\bfseries] at (2.5,2.5) {P};
-  \node[font=\small\bfseries] at (3.5,2.5) {S};
-  \node[font=\small\bfseries] at (4.5,2.5) {E};
-  \node[font=\small\bfseries] at (6.5,2.5) {I};
-  % Row 1
-  \node[font=\small\bfseries] at (0.5,1.5) {E};
-  \node[font=\small\bfseries] at (2.5,1.5) {E};
-  \node[font=\small\bfseries] at (4.5,1.5) {R};
-  \node[font=\small\bfseries] at (6.5,1.5) {L};
-  % Row 0
-  \node[font=\small\bfseries] at (0.5,0.5) {S};
-  \node[font=\small\bfseries] at (1.5,0.5) {O};
-  \node[font=\small\bfseries] at (2.5,0.5) {U};
-  \node[font=\small\bfseries] at (3.5,0.5) {L};
-  \node[font=\small\bfseries] at (4.5,0.5) {T};
-  \node[font=\small\bfseries] at (5.5,0.5) {E};
-  \node[font=\small\bfseries] at (6.5,0.5) {X};
+\begin{tikzpicture}[scale=0.7]
+  \foreach \x/\y in {0/4,0/3,0/2,0/1,0/0, 2/4,2/3,2/2,2/1,2/0, 4/4,4/3,4/2,4/1,4/0, 1/0,3/0}
+    \draw[fill=white, line width=0.5pt] (\x,\y) rectangle ++(1,1);
+  \node[anchor=north west, font=\tiny\bfseries] at (0.05,4.95) {1};
+  \node[anchor=north west, font=\tiny\bfseries] at (2.05,4.95) {2};
+  \node[anchor=north west, font=\tiny\bfseries] at (4.05,4.95) {3};
+  \node[anchor=north west, font=\tiny\bfseries] at (0.05,0.95) {4};
 \end{tikzpicture}
 \end{center}
 
 \noindent
 \begin{minipage}[t]{0.45\textwidth}
 \textbf{Across:}\\[2pt]
-\textbf{1.} The document preparation system (5)\\[1pt]
-\textbf{3.} The output format (3)\\[1pt]
-\textbf{5.} A package for letter-spacing (4)
+\textbf{4.} The system you are reading right now (5)
 \end{minipage}\hfill
 \begin{minipage}[t]{0.45\textwidth}
 \textbf{Down:}\\[2pt]
-\textbf{1.} These stay aligned in \LaTeX{} (5)\\[1pt]
-\textbf{2.} What \LaTeX{} does automatically (8)\\[1pt]
-\textbf{4.} Portable document format (3)
+\textbf{1.} A tag you can attach to an equation (5)\\[1pt]
+\textbf{2.} What a program reads from the keyboard (5)\\[1pt]
+\textbf{3.} Open-source kernel with a penguin (5)
 \end{minipage}
+
+\medskip
+\noindent{\footnotesize Solution (upside down): \rotatebox{180}{LABEL \ INPUT \ LINUX \ LATEX}}
 
 % ------------------------------------------------------------------
 \subsection*{Rubik's Cube Diagrams (Pure TikZ Isometric)}
 % ------------------------------------------------------------------
-A full 3D isometric Rubik's cube drawn with pure TikZ --- no package needed.
-Two states side-by-side: a checkerboard scramble and a solved cube:
+A 3D isometric cube drawn with one reusable macro. The stickers on the left are a
+pseudo-random pattern, the right cube is solved:
 
 \begin{center}
-\begin{tikzpicture}[
-  x={(0.866cm, 0.5cm)},
-  y={(0cm, 1cm)},
-  z={(-0.866cm, 0.5cm)},
-  scale=0.85
-]
-% ---- SCRAMBLED CUBE (checkerboard) ----
-% Top face: hardcoded alternating colors (avoids \def inside \ifnum)
-\fill[white,          draw=black,lw=0.5pt] (0,3,0)--(1,3,0)--(1,3,1)--(0,3,1)--cycle;
-\fill[orange!90!red,  draw=black,line width=0.5pt] (1,3,0)--(2,3,0)--(2,3,1)--(1,3,1)--cycle;
-\fill[white,          draw=black,line width=0.5pt] (2,3,0)--(3,3,0)--(3,3,1)--(2,3,1)--cycle;
-\fill[orange!90!red,  draw=black,line width=0.5pt] (0,3,1)--(1,3,1)--(1,3,2)--(0,3,2)--cycle;
-\fill[white,          draw=black,line width=0.5pt] (1,3,1)--(2,3,1)--(2,3,2)--(1,3,2)--cycle;
-\fill[orange!90!red,  draw=black,line width=0.5pt] (2,3,1)--(3,3,1)--(3,3,2)--(2,3,2)--cycle;
-\fill[white,          draw=black,line width=0.5pt] (0,3,2)--(1,3,2)--(1,3,3)--(0,3,3)--cycle;
-\fill[orange!90!red,  draw=black,line width=0.5pt] (1,3,2)--(2,3,2)--(2,3,3)--(1,3,3)--cycle;
-\fill[white,          draw=black,line width=0.5pt] (2,3,2)--(3,3,2)--(3,3,3)--(2,3,3)--cycle;
-% Front face: alternating green / yellow
-\fill[green!70!black, draw=black,line width=0.5pt] (0,0,3)--(1,0,3)--(1,1,3)--(0,1,3)--cycle;
-\fill[yellow!90!orange,draw=black,line width=0.5pt] (1,0,3)--(2,0,3)--(2,1,3)--(1,1,3)--cycle;
-\fill[green!70!black, draw=black,line width=0.5pt] (2,0,3)--(3,0,3)--(3,1,3)--(2,1,3)--cycle;
-\fill[yellow!90!orange,draw=black,line width=0.5pt] (0,1,3)--(1,1,3)--(1,2,3)--(0,2,3)--cycle;
-\fill[green!70!black, draw=black,line width=0.5pt] (1,1,3)--(2,1,3)--(2,2,3)--(1,2,3)--cycle;
-\fill[yellow!90!orange,draw=black,line width=0.5pt] (2,1,3)--(3,1,3)--(3,2,3)--(2,2,3)--cycle;
-\fill[green!70!black, draw=black,line width=0.5pt] (0,2,3)--(1,2,3)--(1,3,3)--(0,3,3)--cycle;
-\fill[yellow!90!orange,draw=black,line width=0.5pt] (1,2,3)--(2,2,3)--(2,3,3)--(1,3,3)--cycle;
-\fill[green!70!black, draw=black,line width=0.5pt] (2,2,3)--(3,2,3)--(3,3,3)--(2,3,3)--cycle;
-% Right face: alternating red / blue
-\fill[red!80!black,   draw=black,line width=0.5pt] (3,0,2)--(3,1,2)--(3,1,3)--(3,0,3)--cycle;
-\fill[blue!70!white,  draw=black,line width=0.5pt] (3,1,2)--(3,2,2)--(3,2,3)--(3,1,3)--cycle;
-\fill[red!80!black,   draw=black,line width=0.5pt] (3,2,2)--(3,3,2)--(3,3,3)--(3,2,3)--cycle;
-\fill[blue!70!white,  draw=black,line width=0.5pt] (3,0,1)--(3,1,1)--(3,1,2)--(3,0,2)--cycle;
-\fill[red!80!black,   draw=black,line width=0.5pt] (3,1,1)--(3,2,1)--(3,2,2)--(3,1,2)--cycle;
-\fill[blue!70!white,  draw=black,line width=0.5pt] (3,2,1)--(3,3,1)--(3,3,2)--(3,2,2)--cycle;
-\fill[red!80!black,   draw=black,line width=0.5pt] (3,0,0)--(3,1,0)--(3,1,1)--(3,0,1)--cycle;
-\fill[blue!70!white,  draw=black,line width=0.5pt] (3,1,0)--(3,2,0)--(3,2,1)--(3,1,1)--cycle;
-\fill[red!80!black,   draw=black,line width=0.5pt] (3,2,0)--(3,3,0)--(3,3,1)--(3,2,1)--cycle;
-% Outline
-\draw[black, line width=1.2pt]
-  (0,3,0)--(3,3,0)--(3,3,3)--(0,3,3)--cycle
-  (0,0,3)--(3,0,3)--(3,3,3)--(0,3,3)--cycle
-  (3,0,0)--(3,0,3)--(3,3,3)--(3,3,0)--cycle;
-\node[below=6pt, font=\small\itshape] at (1.5,0,1.5) {Scrambled};
-\end{tikzpicture}
-%
-\hspace{1.5cm}
-%
-% ---- SOLVED CUBE ----
-\begin{tikzpicture}[
-  x={(0.866cm, 0.5cm)},
-  y={(0cm, 1cm)},
-  z={(-0.866cm, 0.5cm)},
-  scale=0.85
-]
-% Top face (all white)
-\foreach \i in {0,1,2} {
-  \foreach \j in {0,1,2} {
-    \fill[white, draw=black, line width=0.5pt]
-      (\i,3,\j)--(\i+1,3,\j)--(\i+1,3,\j+1)--(\i,3,\j+1)--cycle;
-  }
-}
-% Front face (all green)
-\foreach \i in {0,1,2} {
-  \foreach \j in {0,1,2} {
-    \fill[green!70!black, draw=black, line width=0.5pt]
-      (\i,\j,3)--(\i+1,\j,3)--(\i+1,\j+1,3)--(\i,\j+1,3)--cycle;
-  }
-}
-% Right face (all red)
-\foreach \i in {0,1,2} {
-  \foreach \j in {0,1,2} {
-    \fill[red!80!black, draw=black, line width=0.5pt]
-      (3,\j,2-\i)--(3,\j+1,2-\i)--(3,\j+1,3-\i)--(3,\j,3-\i)--cycle;
-  }
-}
-\draw[black, line width=1.2pt]
-  (0,3,0)--(3,3,0)--(3,3,3)--(0,3,3)--cycle
-  (0,0,3)--(3,0,3)--(3,3,3)--(0,3,3)--cycle
-  (3,0,0)--(3,0,3)--(3,3,3)--(3,3,0)--cycle;
-\node[below=6pt, font=\small\itshape] at (1.5,0,1.5) {Solved};
-\end{tikzpicture}
-\end{center}
-\begin{center}
-\small\textit{Both cubes drawn in pure TikZ with isometric coordinates --- zero extra packages.}
+\rubik{1}\hspace{1.5cm}\rubik{0}
+
+{\small\itshape Scrambled (illustrative) \hspace{3.2cm} Solved}
 \end{center}
 
+% ------------------------------------------------------------------
+\subsection*{QR Codes (\texttt{qrcode})}
+% ------------------------------------------------------------------
+\begin{minipage}[c]{0.2\textwidth}
+\qrcode[height=2.4cm]{https://ctan.org}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.74\textwidth}
+This QR code is generated by \LaTeX{} itself, as vector graphics, with no image file.
+It points to \url{https://ctan.org}, the archive that hosts the packages used here.
+\end{minipage}
 
 \bigskip
 \begin{tcolorbox}[
@@ -935,10 +1032,8 @@ Two states side-by-side: a checkerboard scramble and a solved cube:
   left=8mm
 ]
 If you can \textbf{describe} something mathematically or structurally, \LaTeX{} can
-\textbf{typeset} it. Search CTAN (\texttt{ctan.org}) for any niche domain --- over
-\textbf{6,000 packages} are available, and every single one of them is pre-installed
-on Overleaf with zero setup. The question is never \textit{can \LaTeX{} do this?}
-The question is only \textit{which package?}
+\textbf{typeset} it. Search CTAN (\texttt{ctan.org}) for any niche domain. The question is
+never \textit{can \LaTeX{} do this?} The question is only \textit{which package?}
 \end{tcolorbox}
 
 \end{document}
