@@ -1,183 +1,215 @@
 \documentclass[12pt, a4paper]{article}
 
-% --- REQUIRED PACKAGES ---
+% ============================================================
+%  LaTeX / TikZ Diagram Gallery
+%  Build: pdflatex gallery.tex  (single pass; plain TikZ only, no heavy packages)
+
+% ============================================================
+
+% --- BASIC PACKAGES ---
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[margin=1in]{geometry}
+\usepackage{amssymb}      % \checkmark
 \usepackage{xcolor}
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue!70!black,
-    urlcolor=blue!70!black,
-    citecolor=green!50!black
-}
+\usepackage{needspace}    % keeps a diagram title together with its diagram
 
 % --- TABLES ---
 \usepackage{tabularx}
-\usepackage{booktabs}    % Professional tables: \toprule, \midrule, \bottomrule
+\usepackage{booktabs}
 
-% --- CORE TikZ AND LIBRARIES ---
+% --- TikZ + LIBRARIES (only the ones actually used, to keep compile fast) ---
 \usepackage{tikz}
 \usetikzlibrary{
-    shapes.geometric,
-    shapes.symbols,
-    shapes.multipart,
-    shapes.misc,         % cloud, tape shapes
-    arrows.meta,         % Modern arrow tips (replaces deprecated arrows)
-    positioning,
-    matrix,
-    trees,               % For tree layouts (fast; replaces mindmap)
-    er,
+    shapes.geometric,    % diamond, trapezium, regular polygon, cylinder
+    shapes.symbols,      % cloud, signal, tape
+    shapes.multipart,    % rectangle split (UML classes, linked lists)
+    arrows.meta,         % Stealth, Triangle tips
+    positioning,         % right=of, below=of ...
+    trees,               % grow cyclic (mind map)
+    er,                  % entity / attribute / relationship
     calc,
-    backgrounds
+    backgrounds,         % on background layer
+    fit                  % zones / boundaries
 }
 
-% --- SPECIALIZED DIAGRAM PACKAGES ---
-\usepackage{pgfgantt}    % Gantt Charts
-\usepackage{forest}      % Org Charts and Decision Trees
-\usepackage{circuitikz}  % Circuit Schematics
-\usepackage{pgfplots}    % Data Plots
-\pgfplotsset{compat=1.18}
-\usepgfplotslibrary{polar} % Required for polaraxis (Radar charts)
 
-% --- GLOBAL TikZ STYLES (using tikzset, not deprecated tikzstyle) ---
+% --- GLOBAL TikZ STYLES ---
 \tikzset{
-  process/.style     = {rectangle, minimum width=2.5cm, minimum height=1cm,
-                        text centered, draw=black, fill=blue!10},
-  startstop/.style   = {rectangle, rounded corners, minimum width=2.5cm,
-                        minimum height=1cm, text centered, draw=black, fill=red!15},
-  decision/.style    = {diamond, minimum width=2.5cm, minimum height=1cm,
-                        text centered, draw=black, fill=green!10, aspect=2},
-  io/.style          = {trapezium, trapezium left angle=70, trapezium right angle=110,
-                        minimum width=2cm, minimum height=1cm, text centered,
-                        draw=black, fill=yellow!10},
-  database/.style    = {cylinder, shape border rotate=90, aspect=0.25, draw=black,
-                        fill=purple!10, minimum height=1.5cm, minimum width=1.5cm,
-                        text centered},
-  doc/.style         = {tape, tape bend top=none, draw=black, fill=white,
-                        minimum width=2cm, minimum height=1.5cm, text centered},
-  arrow/.style       = {thick, ->, >=Stealth}
+  process/.style   = {rectangle, minimum width=2.5cm, minimum height=1cm,
+                      align=center, draw=black, fill=blue!10},
+  startstop/.style = {rectangle, rounded corners, minimum width=2.5cm,
+                      minimum height=1cm, align=center, draw=black, fill=red!15},
+  decision/.style  = {diamond, aspect=2, inner sep=1pt, minimum width=2.5cm,
+                      minimum height=1cm, align=center, draw=black, fill=green!10},
+  io/.style        = {trapezium, trapezium left angle=70, trapezium right angle=110,
+                      trapezium stretches body, inner xsep=4pt, minimum width=2.5cm,
+                      minimum height=1cm, align=center, draw=black, fill=yellow!10},
+  database/.style  = {cylinder, shape border rotate=90, aspect=0.25, draw=black,
+                      fill=purple!10, minimum height=1.5cm, minimum width=1.5cm,
+                      align=center},
+  doc/.style       = {tape, tape bend top=none, draw=black, fill=white,
+                      minimum width=2cm, minimum height=1.5cm, align=center},
+  arrow/.style     = {thick, -{Stealth}},
+  darrow/.style    = {thick, {Stealth}-{Stealth}},
+  lbl/.style       = {font=\scriptsize, inner sep=1.5pt}
 }
 
-\title{The Ultimate \LaTeX\ Diagram Gallery (26+ Templates)}
+% Numbered diagram headings that still appear in the table of contents
+\newcounter{dnum}
+% Table of contents is OFF by default (it forces a second compile pass).
+% Set \showtoctrue to switch it on; then compile twice.
+\newif\ifshowtoc
+\showtocfalse
+
+% \diagram[n]{Title}: n = baselines of free space required before the heading
+% (default 16), so a heading is never left alone at the bottom of a page.
+\newcommand{\diagram}[2][16]{%
+  \Needspace{#1\baselineskip}%
+  \refstepcounter{dnum}%
+  \subsection*{\thednum.\ #2}%
+  \addcontentsline{toc}{subsection}{\protect\numberline{\thednum}#2}}
+
+% Keep each section heading together with the first diagram below it
+\let\origsection\section
+\renewcommand{\section}[1]{\Needspace{32\baselineskip}\origsection{#1}}
+
+% Fallback for the ER library's \key (underlined primary-key attribute)
+\providecommand{\key}[1]{\underline{#1}}
+
+% Stick figure for use-case diagrams: \stickman{x}{y}
+\newcommand{\stickman}[2]{%
+  \draw (#1,#2+0.55) circle (0.15);
+  \draw (#1,#2+0.4) -- (#1,#2) (#1-0.25,#2+0.3) -- (#1+0.25,#2+0.3)
+        (#1,#2) -- (#1-0.2,#2-0.45) (#1,#2) -- (#1+0.2,#2-0.45);}
+
+\title{The Ultimate \LaTeX\ Diagram Gallery}
 \author{Overleaf Seminar Reference}
 \date{\today}
 
 \begin{document}
 
 \maketitle
-\tableofcontents
-\newpage
+\ifshowtoc
+  \tableofcontents
+  \newpage
+\fi
 
 % ============================================================
 \section{Core Business \& Process Flowcharts}
 % ============================================================
 
-\subsection{1. Basic Process Flowchart}
+\diagram{Basic Process Flowchart}
 \begin{center}
-\begin{tikzpicture}[node distance=2.5cm]
+\begin{tikzpicture}[node distance=0.8cm]
     \node (start) [startstop] {Start};
-    \node (step1) [process, below of=start] {Step 1};
-    \node (step2) [process, below of=step1] {Step 2};
-    \node (end)   [startstop, below of=step2] {End};
-    
+    \node (step1) [process, below=of start] {Step 1};
+    \node (step2) [process, below=of step1] {Step 2};
+    \node (end)   [startstop, below=of step2] {End};
     \draw [arrow] (start) -- (step1);
     \draw [arrow] (step1) -- (step2);
     \draw [arrow] (step2) -- (end);
 \end{tikzpicture}
 \end{center}
 
-\subsection{2. Workflow Diagram}
+\diagram{Workflow Diagram}
 Focuses on human-centric tasks and office routines.
 \begin{center}
-\begin{tikzpicture}[node distance=2.5cm]
+\begin{tikzpicture}[node distance=1cm]
     \node (doc)     [doc] {Receive Form};
-    \node (clerk)   [process, right of=doc, xshift=2cm] {Clerk Review};
-    \node (manager) [process, right of=clerk, xshift=2cm] {Manager Sign};
+    \node (clerk)   [process, right=of doc] {Clerk Review};
+    \node (manager) [process, right=of clerk] {Manager Sign-off};
+    \node (archive) [database, right=of manager] {Archive};
     \draw [arrow] (doc) -- (clerk);
     \draw [arrow] (clerk) -- (manager);
+    \draw [arrow] (manager) -- (archive);
 \end{tikzpicture}
 \end{center}
 
-\subsection{3. Swimlane (Cross-Functional) Diagram}
+\diagram{Swimlane (Cross-Functional) Diagram}
 \begin{center}
 \begin{tikzpicture}
     \draw (0,0) rectangle (10,-4);
     \draw (0,-2) -- (10,-2);
     \node[rotate=90, font=\bfseries] at (-0.5,-1) {Sales};
     \node[rotate=90, font=\bfseries] at (-0.5,-3) {IT Dept};
-    
+
     \node (req) [process] at (2,-1) {Client Request};
     \node (dev) [process, fill=orange!10] at (5,-3) {Develop Feature};
     \node (del) [process] at (8,-1) {Deliver};
-    
+
     \draw [arrow] (req) |- (dev);
     \draw [arrow] (dev) -| (del);
 \end{tikzpicture}
 \end{center}
 
-\subsection{4. Value Stream Map (VSM)}
-% Fixed: use .south/.north anchors to make the material flow direction unambiguous.
+\diagram{Value Stream Map (VSM)}
 \begin{center}
 \begin{tikzpicture}
-    % Top row: information flow
-    \node (supplier) [process] at (0,2.5)   {Supplier};
+    % Top row: information flow; bottom row: material flow
+    \node (supplier) [process] at (0,2.5) {Supplier};
     \node (prodCtrl) [process, fill=gray!20] at (4,2.5) {Prod.\ Control};
-    \node (customer) [process] at (8,2.5)   {Customer};
-    % Bottom row: material flow
-    \node (manuf1)   [process] at (2,0)     {Process 1};
-    \node (manuf2)   [process] at (6,0)     {Process 2};
-    % Information flow (dashed, top)
+    \node (customer) [process] at (8,2.5) {Customer};
+    \node (manuf1)   [process] at (2,0) {Process 1};
+    \node (manuf2)   [process] at (6,0) {Process 2};
+
     \draw [->, dashed, thick, >=Stealth] (supplier) -- (prodCtrl);
     \draw [->, dashed, thick, >=Stealth] (prodCtrl) -- (customer);
-    % Material flow: straight vertical then horizontal, direction always clear
     \draw [arrow] (supplier.south) -- (manuf1.north);
-    \draw [arrow] (manuf1)         -- (manuf2);
-    \draw [arrow] (manuf2.north)   -- (customer.south);
+    \draw [arrow] (manuf1) -- (manuf2);
+    \draw [arrow] (manuf2.north) -- (customer.south);
+
+    % Data boxes under each process
+    \node[below=1mm of manuf1, font=\scriptsize, draw, fill=white] {C/T = 45 s};
+    \node[below=1mm of manuf2, font=\scriptsize, draw, fill=white] {C/T = 30 s};
 \end{tikzpicture}
 \end{center}
 
-\subsection{5. EPC (Event-driven Process Chain)}
+\diagram{EPC (Event-driven Process Chain)}
 Hexagons for events, rounded rectangles for functions.
 \begin{center}
-\begin{tikzpicture}[node distance=2cm]
+\begin{tikzpicture}[node distance=0.7cm]
     \node (event1) [regular polygon, regular polygon sides=6, draw, fill=pink!30,
-                    text width=2cm, align=center] {Order\\Received};
-    \node (func)   [process, rounded corners, below of=event1, fill=green!20] {Check Stock};
+                    inner sep=2pt, align=center] {Order\\Received};
+    \node (func)   [process, rounded corners, below=of event1, fill=green!20] {Check Stock};
     \node (event2) [regular polygon, regular polygon sides=6, draw, fill=pink!30,
-                    below of=func, text width=2cm, align=center] {Stock\\Checked};
-    
+                    inner sep=2pt, align=center, below=of func] {Stock\\Checked};
     \draw [arrow] (event1) -- (func);
     \draw [arrow] (func)   -- (event2);
 \end{tikzpicture}
 \end{center}
 
-\subsection{6. BPMN (Business Process Model and Notation) Diagram}
+\diagram{BPMN (Business Process Model and Notation) Diagram}
 Circles for start/end events, diamonds for exclusive gateways.
 \begin{center}
-\begin{tikzpicture}[node distance=2.5cm]
-    \node (start)   [circle, draw, very thick, minimum size=1cm] {};
-    \node (task)    [process, rounded corners, right of=start, xshift=1cm] {Do Task};
-    \node (gateway) [diamond, draw, fill=yellow!20, right of=task, xshift=1cm,
-                     inner sep=0pt, minimum size=1cm] {$\times$};
-    \node (end)     [circle, draw, very thick, double, right of=gateway,
-                     xshift=1cm, minimum size=1cm] {};
-    
-    \draw [arrow] (start)   -- (task);
-    \draw [arrow] (task)    -- (gateway);
-    \draw [arrow] (gateway) -- (end);
+\begin{tikzpicture}[node distance=0.8cm]
+    \node (start) [circle, draw, thick, minimum size=0.8cm] {};
+    \node (task)  [process, rounded corners, right=of start] {Review Request};
+    \node (gw)    [diamond, draw, fill=yellow!20, right=of task, inner sep=1pt,
+                   minimum size=0.9cm] {$\times$};
+    \node (ok)    [process, rounded corners, right=of gw] {Approve};
+    \node (end)   [circle, draw, ultra thick, minimum size=0.8cm, right=of ok] {};
+    \node (rej)   [process, rounded corners, below=of gw, fill=red!10] {Send Back};
+
+    \draw [arrow] (start) -- (task);
+    \draw [arrow] (task)  -- (gw);
+    \draw [arrow] (gw)    -- node[above, lbl]{yes} (ok);
+    \draw [arrow] (ok)    -- (end);
+    \draw [arrow] (gw)    -- node[right, lbl]{no} (rej);
+    \draw [arrow] (rej.west) -| (task.south);
 \end{tikzpicture}
 \end{center}
 
-\subsection{7. SIPOC (Supplier, Input, Process, Output, Customer) Diagram}
+\diagram{SIPOC (Supplier, Input, Process, Output, Customer) Diagram}
 Best represented as a structured table using \texttt{tabularx} and \texttt{booktabs}.
 \begin{center}
+\renewcommand{\arraystretch}{1.3}
 \begin{tabularx}{\textwidth}{@{}XXXXX@{}}
     \toprule
     \textbf{Supplier} & \textbf{Input} & \textbf{Process} & \textbf{Output} & \textbf{Customer} \\
     \midrule
-    Vendor & Raw Materials & Manufacturing & Finished Goods & Retailer \\
+    Vendor    & Raw materials & Manufacturing & Finished goods & Retailer \\
+    Logistics & Packaging     & Assembly      & Shipping label & End user \\
     \bottomrule
 \end{tabularx}
 \end{center}
@@ -186,81 +218,87 @@ Best represented as a structured table using \texttt{tabularx} and \texttt{bookt
 \section{Software, Tech \& Data Flowcharts}
 % ============================================================
 
-% Fixed: use 'near start' to prevent the label overlapping the process circle.
+\diagram{Data Flow Diagram (DFD)}
 \begin{center}
-\begin{tikzpicture}[node distance=3.5cm]
-    \node (ext)   [draw, rectangle, minimum height=1cm, minimum width=2.2cm] {External Entity};
-    \node (proc)  [draw, circle, right of=ext, align=center, minimum size=1.5cm] {1.0\\Process};
-    \node (store) [draw, rectangle, right of=proc,
-                   minimum height=1cm, minimum width=2cm] {Data Store};
-    % Data store double-line decoration
-    \draw[thick] (store.north west) -- (store.south west);
+\begin{tikzpicture}[node distance=1.6cm]
+    \node (ext)   [draw, rectangle, minimum height=1cm, minimum width=2.2cm] {Customer};
+    \node (proc)  [draw, circle, right=of ext, align=center, minimum size=1.8cm] {1.0\\Process};
+    \node (store) [right=of proc, minimum height=1cm, minimum width=2.4cm] {Data Store};
+    % Open-ended data store: top and bottom lines plus the left bar
+    \draw[thick] (store.north east) -- (store.north west) -- (store.south west)
+                 -- (store.south east);
 
-    \draw [arrow] (ext)  -- node[above, near start]{\small Input Data} (proc);
-    \draw [arrow] (proc) -- node[above, near start]{\small Save}       (store);
+    \draw [arrow] (ext)  -- node[above, lbl]{Input data} (proc);
+    \draw [arrow] (proc) -- node[above, lbl]{Save} (store);
 \end{tikzpicture}
 \end{center}
 
-\subsection{9. System Flowchart}
+\diagram{System Flowchart}
 Shows hardware/network data movement.
 \begin{center}
-\begin{tikzpicture}[node distance=2.5cm]
-    \node (input)  [io]                              {Keyboard Input};
-    \node (server) [process, right of=input, xshift=2cm] {Web Server};
-    \node (db)     [database, right of=server, xshift=2cm] {SQL DB};
-    
+\begin{tikzpicture}[node distance=1.2cm]
+    \node (input)  [io] {Keyboard Input};
+    \node (server) [process, right=of input] {Web Server};
+    \node (db)     [database, right=of server] {SQL DB};
     \draw [arrow] (input) -- (server);
-    \draw [<->, thick, >=Stealth] (server) -- (db);
+    \draw [darrow] (server) -- (db);
 \end{tikzpicture}
 \end{center}
 
-\subsection{10. Program Flowchart}
+\diagram{Program Flowchart}
+A loop that prints $i$ for $i = 0 \dots 9$; the loop body returns to the test, not to the initialisation.
 \begin{center}
-\begin{tikzpicture}[node distance=2cm]
+\begin{tikzpicture}[node distance=0.7cm]
     \node (start) [startstop] {Start};
-    \node (init)  [process, below of=start] {i = 0};
-    \node (cond)  [decision, below of=init, yshift=-0.5cm] {i $<$ 10?};
-    \node (loop)  [process, right of=cond, xshift=3cm] {Print i;\quad i++};
-    \node (end)   [startstop, below of=cond, yshift=-0.5cm] {End};
-    
+    \node (init)  [process, below=of start] {$i \leftarrow 0$};
+    \node (cond)  [decision, below=of init] {$i < 10$?};
+    \node (loop)  [process, right=2cm of cond] {Print $i$;\quad $i \leftarrow i+1$};
+    \node (end)   [startstop, below=of cond] {End};
+
     \draw [arrow] (start) -- (init);
     \draw [arrow] (init)  -- (cond);
-    \draw [arrow] (cond)  -- node[anchor=south] {\small Yes} (loop);
-    \draw [arrow] (loop)  |- (init);
-    \draw [arrow] (cond)  -- node[anchor=east]  {\small No}  (end);
+    \draw [arrow] (cond)  -- node[above, lbl] {Yes} (loop);
+    \draw [arrow] (loop.north) |- ($(init.south)!0.5!(cond.north)$);
+    \draw [arrow] (cond)  -- node[right, lbl] {No} (end);
 \end{tikzpicture}
 \end{center}
 
-\subsection{11. SDL (Specification and Description Language) Diagram}
+\diagram{SDL (Specification and Description Language) Diagram}
 Standardized shapes for telecommunications and software behavior.
 \begin{center}
-\begin{tikzpicture}[node distance=2cm]
+\begin{tikzpicture}[node distance=0.8cm]
     \node (state)  [process, rounded corners, fill=gray!20] {Idle State};
-    \node (signal) [draw, signal, signal to=east, below of=state,
-                    fill=blue!10, minimum width=2.5cm, minimum height=1cm,
-                    text centered] {Receive Msg};
-    \node (task)   [process, below of=signal] {Process Msg};
-    
+    \node (signal) [draw, signal, signal to=east, below=of state, fill=blue!10,
+                    minimum width=2.8cm, minimum height=1cm, align=center] {Receive Msg};
+    \node (task)   [process, below=of signal] {Process Msg};
     \draw [arrow] (state)  -- (signal);
     \draw [arrow] (signal) -- (task);
 \end{tikzpicture}
 \end{center}
 
-\subsection{12. UML (Unified Modeling Language) Activity Diagram}
-Shows dynamic execution behavior.
+\diagram[26]{UML Activity Diagram}
+Shows dynamic execution behavior, including a fork and a join.
 \begin{center}
-\begin{tikzpicture}[node distance=2cm]
+\begin{tikzpicture}[node distance=0.7cm]
     \node (start) [circle, fill=black, minimum size=0.5cm] {};
-    \node (act1)  [process, rounded corners, below of=start] {Activity 1};
-    \node (fork)  [draw, fill=black, minimum width=3cm, minimum height=0.2cm,
-                   below of=act1] {};
-    \node (act2)  [process, rounded corners, below left of=fork,  xshift=-1cm] {Concurrent A};
-    \node (act3)  [process, rounded corners, below right of=fork, xshift=1cm]  {Concurrent B};
-    
-    \draw [arrow] (start)          -- (act1);
-    \draw [arrow] (act1)           -- (fork);
-    \draw [arrow] (fork.south west) -- (act2.north);
-    \draw [arrow] (fork.south east) -- (act3.north);
+    \node (act1)  [process, rounded corners, below=of start] {Activity 1};
+    \node (fork)  [draw, fill=black, minimum width=5cm, minimum height=0.15cm,
+                   below=of act1] {};
+    \node (act2)  [process, rounded corners, below left=0.8cm and -0.3cm of fork] {Concurrent A};
+    \node (act3)  [process, rounded corners, below right=0.8cm and -0.3cm of fork] {Concurrent B};
+    \node (join)  [draw, fill=black, minimum width=5cm, minimum height=0.15cm,
+                   below=2.9cm of fork] {};
+    \node (final) [circle, draw, double, double distance=1.5pt, minimum size=0.7cm,
+                   below=of join, inner sep=0pt] {};
+    \node[circle, fill=black, minimum size=0.4cm, inner sep=0pt] at (final) {};
+
+    \draw [arrow] (start) -- (act1);
+    \draw [arrow] (act1)  -- (fork);
+    \draw [arrow] (fork.south -| act2) -- (act2);
+    \draw [arrow] (fork.south -| act3) -- (act3);
+    \draw [arrow] (act2) -- (act2 |- join.north);
+    \draw [arrow] (act3) -- (act3 |- join.north);
+    \draw [arrow] (join) -- (final);
 \end{tikzpicture}
 \end{center}
 
@@ -268,58 +306,79 @@ Shows dynamic execution behavior.
 \section{Logic, Strategy \& Troubleshooting Flowcharts}
 % ============================================================
 
-\subsection{13. Decision Tree Diagram}
+\diagram[20]{Decision Tree Diagram}
 \begin{center}
-\begin{forest}
-  for tree={draw, align=center, edge={thick, -Stealth},
-            minimum width=2cm, minimum height=0.8cm, s sep=1.5cm}
-  [Is it raining?
-    [Yes [Stay Inside]]
-    [No  [Go for a Walk]]
-  ]
-\end{forest}
-\end{center}
-
-\subsection{14. Troubleshooting Flowchart}
-\begin{center}
-\begin{tikzpicture}[node distance=2.5cm]
-    \node (prob)   [process, text width=3.5cm] {Computer won't turn on};
-    \node (dec)    [decision, below of=prob, yshift=-1cm] {Plugged in?};
-    \node (plug)   [process, right of=dec, xshift=3cm] {Plug it in};
-    \node (broken) [startstop, fill=red!20, below of=dec, yshift=-1cm] {Call IT Support};
-    
-    \draw [arrow] (prob)   -- (dec);
-    \draw [arrow] (dec)    -- node[anchor=south] {\small No}  (plug);
-    \draw [arrow] (dec)    -- node[anchor=east]  {\small Yes} (broken);
+\begin{tikzpicture}[tn/.style={draw, rounded corners, align=center, minimum width=2cm, minimum height=0.8cm},
+                    el/.style={font=\small, inner sep=2pt}]
+    \node[tn, fill=yellow!20] (r) at (0,0)     {Is it raining?};
+    \node[tn, fill=red!10]    (a) at (-3,-1.8) {Stay inside};
+    \node[tn, fill=yellow!20] (b) at (2,-1.8)  {Is it warm?};
+    \node[tn, fill=green!15]  (c) at (0,-3.6)  {Go swimming};
+    \node[tn, fill=green!15]  (d) at (4,-3.6)  {Go for a walk};
+    \draw[arrow] (r) -- node[el, above left]  {Yes} (a);
+    \draw[arrow] (r) -- node[el, above right] {No}  (b);
+    \draw[arrow] (b) -- node[el, above left]  {Yes} (c);
+    \draw[arrow] (b) -- node[el, above right] {No}  (d);
 \end{tikzpicture}
 \end{center}
 
-\subsection{15. Fishbone (Ishikawa) Diagram}
+\diagram{Troubleshooting Flowchart}
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm]
+    \node (prob)   [process, text width=3.5cm] {Computer won't turn on};
+    \node (dec)    [decision, below=of prob] {Plugged in?};
+    \node (plug)   [process, right=2.2cm of dec] {Plug it in};
+    \node (broken) [startstop, fill=red!20, below=of dec] {Call IT Support};
+
+    \draw [arrow] (prob) -- (dec);
+    \draw [arrow] (dec)  -- node[above, lbl] {No} (plug);
+    \draw [arrow] (dec)  -- node[right, lbl] {Yes} (broken);
+    \draw [arrow] (plug.north) |- (prob.east);
+\end{tikzpicture}
+\end{center}
+
+\diagram[20]{Fishbone (Ishikawa) Diagram}
+Root-cause analysis: each bone is a cause category with example contributing causes.
 \begin{center}
 \begin{tikzpicture}[font=\small]
-    \draw[very thick, ->] (0,0) -- (8,0)
-        node[right, draw, fill=red!10, text width=2cm, align=center] {Problem};
-    \draw[thick] (2,0) -- (1,2)   node[above] {Method};
-    \draw[thick] (6,0) -- (5,2)   node[above] {Machine};
-    \draw[thick] (4,0) -- (3,-2)  node[below] {Material};
-    \draw[thick] (7,0) -- (6,-2)  node[below] {Manpower};
+    \draw[very thick, -{Stealth}] (0,0) -- (11,0);
+    \node[right, draw, fill=red!10, text width=2cm, align=center] at (11,0) {Server Breach};
+
+    % Upper bones (category labels above), lower bones (labels below)
+    \foreach \x/\cat/\ca/\cb in {1.8/Method/No input validation/Weak password policy,
+                                 5.3/Machine/Unpatched software/Open ports,
+                                 8.8/Environment/Public Wi-Fi/Shared hosting} {
+        \draw[thick] (\x,2.2) -- (\x+2,0);
+        \node[above, font=\bfseries\small] at (\x,2.2) {\cat};
+        \path (\x,2.2) -- (\x+2,0) coordinate[pos=0.35] (a) coordinate[pos=0.7] (b);
+        \draw (a) -- ++(-0.4,0) node[left, font=\scriptsize] {\ca};
+        \draw (b) -- ++(-0.4,0) node[left, font=\scriptsize] {\cb};
+    }
+    \foreach \x/\cat/\ca/\cb in {1.8/Material/Leaked API keys/Default credentials,
+                                 5.3/Manpower/Phishing clicks/No training,
+                                 8.8/Measurement/No log monitoring/No alerting} {
+        \draw[thick] (\x,-2.2) -- (\x+2,0);
+        \node[below, font=\bfseries\small] at (\x,-2.2) {\cat};
+        \path (\x,-2.2) -- (\x+2,0) coordinate[pos=0.35] (a) coordinate[pos=0.7] (b);
+        \draw (a) -- ++(-0.4,0) node[left, font=\scriptsize] {\ca};
+        \draw (b) -- ++(-0.4,0) node[left, font=\scriptsize] {\cb};
+    }
 \end{tikzpicture}
 \end{center}
 
-\subsection{16. PERT (Program Evaluation and Review Technique) Chart}
-Used in project management to show task dependencies.
+\diagram{PERT (Program Evaluation and Review Technique) Chart}
+Task dependencies; the critical path ($1 \to 3 \to 4$, total 6) is highlighted.
 \begin{center}
-\begin{tikzpicture}[node distance=2.5cm,
-    every node/.style={circle, draw, minimum size=1cm}]
-    \node (n1) {1};
-    \node (n2) [above right of=n1] {2};
-    \node (n3) [below right of=n1] {3};
-    \node (n4) [below right of=n2] {4};
-    
-    \draw [arrow] (n1) -- node[draw=none, above left]  {\small t=3} (n2);
-    \draw [arrow] (n1) -- node[draw=none, below left]  {\small t=2} (n3);
-    \draw [arrow] (n2) -- node[draw=none, above right] {\small t=1} (n4);
-    \draw [arrow] (n3) -- node[draw=none, below right] {\small t=4} (n4);
+\begin{tikzpicture}[event/.style={circle, draw, minimum size=1cm, fill=orange!15}]
+    \node[event] (n1) at (0,0)    {1};
+    \node[event] (n2) at (3,1.5)  {2};
+    \node[event] (n3) at (3,-1.5) {3};
+    \node[event] (n4) at (6,0)    {4};
+
+    \draw [arrow] (n1) -- node[above left,  font=\small] {$t=3$} (n2);
+    \draw [arrow, red!70!black, very thick] (n1) -- node[below left,  font=\small] {$t=2$} (n3);
+    \draw [arrow] (n2) -- node[above right, font=\small] {$t=1$} (n4);
+    \draw [arrow, red!70!black, very thick] (n3) -- node[below right, font=\small] {$t=4$} (n4);
 \end{tikzpicture}
 \end{center}
 
@@ -327,9 +386,7 @@ Used in project management to show task dependencies.
 \section{Comparison \& Relationship Diagrams}
 % ============================================================
 
-\subsection{17. Venn Diagram}
-% Note: blend group=multiply requires transparency and slows compilation.
-% Using opacity instead for fast rendering.
+\diagram[18]{Venn Diagram}
 \begin{center}
 \begin{tikzpicture}
     \fill[red!50, opacity=0.5]   ( 90:1.0) circle (1.8);
@@ -342,66 +399,77 @@ Used in project management to show task dependencies.
 \end{tikzpicture}
 \end{center}
 
-\subsection{18. Mind Map}
-% Note: The mindmap TikZ library is very slow (~5-8s alone).
-% This uses the fast `trees` library to produce an equivalent visual.
+\diagram[20]{Mind Map}
 \begin{center}
 \begin{tikzpicture}[
-    every node/.style={rounded corners, draw, align=center, font=\small},
-    level 1/.style={sibling distance=3.5cm, fill=teal!20},
-    level 2/.style={sibling distance=2cm, fill=teal!10},
-    edge from parent/.style={thick, draw=gray!60}
-]
-\node[fill=teal!40, font=\bfseries\small] {Main Idea}
-    child { node[fill=blue!20]   {Sub 1} }
-    child { node[fill=orange!20] {Sub 2} }
-    child { node[fill=green!20]  {Sub 3} };
+    grow cyclic,
+    every node/.style={draw, rounded corners, align=center, font=\small, fill=teal!15},
+    edge from parent/.style={draw, thick, gray!70},
+    level 1/.style={level distance=3cm, sibling distance=90, fill=blue!15},
+    level 2/.style={level distance=2.2cm, sibling distance=42, font=\footnotesize, fill=orange!15}]
+\node[fill=teal!40, font=\bfseries] {Security}
+    child {node {Network} child {node {Firewall}} child {node {IDS}}}
+    child {node {Crypto}  child {node {AES}}      child {node {RSA}}}
+    child {node {Web}     child {node {XSS}}      child {node {SQLi}}}
+    child {node {Forensics} child {node {Logs}}   child {node {Disk}}};
 \end{tikzpicture}
 \end{center}
 
-\subsection{19. Matrix Diagram (BCG/SWOT Grid)}
-(BCG = Boston Consulting Group; SWOT = Strengths, Weaknesses, Opportunities, Threats)
-A 2x2 grid is easiest to implement using a simple \texttt{tikzpicture} with explicit coordinates.
+\diagram[20]{Matrix Diagram (Impact / Effort Grid)}
+A 2$\times$2 grid built from explicit coordinates; the same layout works for BCG or SWOT grids.
 \begin{center}
 \begin{tikzpicture}
+    \fill[green!15]  (0,3) rectangle (4,6);
+    \fill[yellow!20] (4,3) rectangle (8,6);
+    \fill[gray!15]   (0,0) rectangle (4,3);
+    \fill[red!12]    (4,0) rectangle (8,3);
     \draw[thick] (0,0) rectangle (8,6);
     \draw[thick] (0,3) -- (8,3);
     \draw[thick] (4,0) -- (4,6);
-    
-    \node[align=center] at (2,4.5) {\textbf{High Risk}\\High Reward};
-    \node[align=center] at (6,4.5) {\textbf{Low Risk}\\High Reward};
-    \node[align=center] at (2,1.5) {\textbf{High Risk}\\Low Reward};
-    \node[align=center] at (6,1.5) {\textbf{Low Risk}\\Low Reward};
-    
-    \node[anchor=west] at (8.2, 4.5) {\small High Value};
-    \node[anchor=west] at (8.2, 1.5) {\small Low Value};
+
+    \node[align=center, text width=3.5cm, font=\small] at (2,4.5) {\textbf{Quick Wins}\\high impact,\\low effort};
+    \node[align=center, text width=3.5cm, font=\small] at (6,4.5) {\textbf{Major Projects}\\high impact,\\high effort};
+    \node[align=center, text width=3.5cm, font=\small] at (2,1.5) {\textbf{Fill-ins}\\low impact,\\low effort};
+    \node[align=center, text width=3.5cm, font=\small] at (6,1.5) {\textbf{Thankless Tasks}\\low impact,\\high effort};
+
+    \node[below] at (4,-0.1) {Effort $\rightarrow$};
+    \node[rotate=90, above] at (-0.1,3) {Impact $\rightarrow$};
 \end{tikzpicture}
 \end{center}
 
-\subsection{20. Scatter Plot (using \texttt{pgfplots})}
+\diagram{Scatter Plot}
 \begin{center}
-\begin{tikzpicture}
-\begin{axis}[title={Data Correlation}, xlabel={Variable X}, ylabel={Variable Y},
-             grid=major, width=0.7\textwidth]
-    \addplot[only marks, mark=*, blue!70, mark size=3pt] coordinates {
-        (1,2) (2,3) (3,2.5) (4,4) (5,3.8) (6,5) (7,4.5) (8,6)
-    };
-    \addplot[thick, red!70, domain=1:8] {0.6*x + 1.4};
-\end{axis}
+\begin{tikzpicture}[x=0.9cm, y=0.8cm, font=\small]
+    \foreach \t in {0,...,9} \draw[gray!30] (\t,0) -- (\t,7);
+    \foreach \t in {0,...,7} \draw[gray!30] (0,\t) -- (9,\t);
+    \draw[thick] (0,0) rectangle (9,7);
+    \foreach \t in {0,...,9} \node[below, font=\scriptsize] at (\t,0) {\t};
+    \foreach \t in {0,...,7} \node[left,  font=\scriptsize] at (0,\t) {\t};
+    \node[below=4mm] at (4.5,0) {Variable X};
+    \node[rotate=90, above=5mm] at (0,3.5) {Variable Y};
+    \node[above] at (4.5,7) {\textbf{Data Correlation}};
+    \foreach \x/\y in {1/2, 2/3, 3/2.5, 4/4, 5/3.8, 6/5, 7/4.5, 8/6}
+        \fill[blue!70] (\x,\y) circle (2.5pt);
+    \draw[thick, red!70] (1,2) -- (8,6.2);
 \end{tikzpicture}
 \end{center}
 
-\subsection{21. Bubble Chart (using \texttt{pgfplots})}
+\diagram{Bubble Chart}
 \begin{center}
-\begin{tikzpicture}
-\begin{axis}[title={Bubble Chart}, xlabel={Market Share}, ylabel={Growth Rate},
-             grid=major, width=0.7\textwidth]
-    % Simulate bubbles using mark size to represent a 3rd variable
-    \addplot[only marks, mark=*, mark size=10pt, blue!40!white,  opacity=0.7] coordinates {(1, 2)};
-    \addplot[only marks, mark=*, mark size=20pt, orange!60!white, opacity=0.7] coordinates {(3, 4)};
-    \addplot[only marks, mark=*, mark size=15pt, green!60!white,  opacity=0.7] coordinates {(5, 3)};
-    \addplot[only marks, mark=*, mark size=8pt,  red!40!white,    opacity=0.7] coordinates {(7, 5)};
-\end{axis}
+\begin{tikzpicture}[x=1.1cm, y=0.9cm, font=\small]
+    \foreach \t in {0,...,8} \draw[gray!30] (\t,0) -- (\t,6);
+    \foreach \t in {0,...,6} \draw[gray!30] (0,\t) -- (8,\t);
+    \draw[thick] (0,0) rectangle (8,6);
+    \foreach \t in {0,...,8} \node[below, font=\scriptsize] at (\t,0) {\t};
+    \foreach \t in {0,...,6} \node[left,  font=\scriptsize] at (0,\t) {\t};
+    \node[below=4mm] at (4,0) {Market Share};
+    \node[rotate=90, above=5mm] at (0,3) {Growth Rate};
+    \node[above] at (4,6) {\textbf{Bubble Chart}};
+    % Bubble radius encodes the third variable
+    \fill[blue!40,   opacity=0.7] (1,2) circle (0.20);
+    \fill[orange!60, opacity=0.7] (3,4) circle (0.45);
+    \fill[green!60,  opacity=0.7] (5,3) circle (0.35);
+    \fill[red!40,    opacity=0.7] (7,5) circle (0.15);
 \end{tikzpicture}
 \end{center}
 
@@ -409,48 +477,51 @@ A 2x2 grid is easiest to implement using a simple \texttt{tikzpicture} with expl
 \section{Structured Business \& Project Diagrams}
 % ============================================================
 
-\subsection{22. Organizational Chart}
+\diagram{Organizational Chart}
 \begin{center}
-\begin{forest}
-  for tree={draw, align=center, fill=blue!5, rounded corners,
-            edge={thick, -Stealth}, s sep=1cm, l sep=1.5cm}
-  [CEO
-    [VP Eng [Team A] [Team B]]
-    [VP Sales [Region A]]
-    [VP HR]
-  ]
-\end{forest}
+\begin{tikzpicture}[tn/.style={draw, align=center, fill=blue!5, rounded corners, minimum height=0.7cm}]
+    \node[tn] (ceo) at (0,0)      {CEO};
+    \node[tn] (e)   at (-3.5,-1.6) {VP Eng};
+    \node[tn] (s)   at (0.5,-1.6)  {VP Sales};
+    \node[tn] (h)   at (3.5,-1.6)  {VP HR};
+    \node[tn] (ta)  at (-4.8,-3.2) {Team A};
+    \node[tn] (tb)  at (-2.2,-3.2) {Team B};
+    \node[tn] (ra)  at (0.5,-3.2)  {Region A};
+    \foreach \p/\c in {ceo/e, ceo/s, ceo/h}
+        \draw[arrow] (\p.south) -- ++(0,-0.4) -| (\c.north);
+    \foreach \p/\c in {e/ta, e/tb, s/ra}
+        \draw[arrow] (\p.south) -- ++(0,-0.4) -| (\c.north);
+\end{tikzpicture}
 \end{center}
 
-\subsection{23. Gantt Chart}
+\diagram{Gantt Chart}
 \begin{center}
-\begin{ganttchart}[vgrid, hgrid,
-    bar/.style={fill=blue!50},
-    bar label font=\small,
-    title label font=\small\bfseries,
-    y unit chart=0.7cm]{1}{12}
-  \gantttitle{Project Timeline (Weeks)}{12} \\
-  \gantttitlelist{1,...,12}{1} \\
-  \ganttbar{Planning}{1}{2} \\
-  \ganttlinkedbar{Design}{3}{5} \\
-  \ganttlinkedbar{Development}{6}{10} \\
-  \ganttlinkedbar{Testing}{11}{12}
-\end{ganttchart}
+\begin{tikzpicture}[x=0.8cm, y=0.7cm]
+    \node[font=\small\bfseries] at (6,1.3) {Project Timeline (Weeks)};
+    \foreach \w in {1,...,12} \node[font=\scriptsize] at (\w-0.5,0.5) {\w};
+    \foreach \w in {0,...,12} \draw[gray!50] (\w,0) -- (\w,-5.5);
+    \foreach \r in {0,...,5}  \draw[gray!50] (0,-\r-0.5+0.5) -- (12,-\r-0.5+0.5);
+    \foreach \i/\t/\s/\e in {1/Planning/1/2, 2/Design/3/5, 3/Development/6/10, 4/Testing/11/12} {
+        \node[left, font=\small] at (0,-\i+0.0) {\t};
+        \fill[blue!50] (\s-1,-\i-0.25) rectangle (\e,-\i+0.25);
+    }
+    \node[left, font=\small] at (0,-5) {Release};
+    \node[diamond, fill=black, inner sep=2.5pt] at (12,-5) {};
+    \foreach \p/\q/\u/\v in {2/1/2/2, 5/2/5/3, 10/3/10/4}
+        \draw[arrow, thin] (\p,-\q) -- (\u,-\v+0.25);
+\end{tikzpicture}
 \end{center}
 
-\subsection{24. Funnel Chart}
+\diagram[20]{Funnel Chart}
 \begin{center}
 \begin{tikzpicture}
-    % Top tier -- widest, so label fits fine inside
     \draw[fill=blue!30] (-3,4) -- (3,4) -- (2,2) -- (-2,2) -- cycle;
     \node[font=\small\bfseries] at (0,3) {Leads (1000)};
 
-    % Middle tier -- label placed to the RIGHT to avoid clipping
     \draw[fill=blue!55] (-2,2) -- (2,2) -- (1,0) -- (-1,0) -- cycle;
     \node[anchor=west, font=\small\bfseries] at (2.2,1) {Prospects (200)};
     \draw[gray, thin] (1.5,1) -- (2.1,1);
 
-    % Bottom tier -- label placed to the RIGHT
     \draw[fill=blue!80] (-1,0) -- (1,0) -- (0.5,-2) -- (-0.5,-2) -- cycle;
     \node[anchor=west, font=\small\bfseries] at (1.2,-1) {Sales (50)};
     \draw[gray, thin] (0.8,-1) -- (1.1,-1);
@@ -461,138 +532,175 @@ A 2x2 grid is easiest to implement using a simple \texttt{tikzpicture} with expl
 \section{Technical \& System Diagrams}
 % ============================================================
 
-\subsection{25. Network Diagram}
+\diagram[20]{Network Diagram}
 \begin{center}
-\begin{tikzpicture}[node distance=2.5cm]
-    \node (internet) [draw, cloud, cloud puffs=10, cloud puff arc=120,
-                      aspect=2, fill=gray!20, minimum width=3cm] {Internet};
-    \node (router)   [process, below of=internet, fill=blue!10] {Router};
-    \node (server)   [database, below left of=router, fill=purple!10] {Server};
-    \node (pc)       [process, below right of=router] {User PC};
-    
-    \draw [<->, thick, >=Stealth] (internet) -- (router);
-    \draw [<->, thick, >=Stealth] (router)   -| (server);
-    \draw [<->, thick, >=Stealth] (router)   -| (pc);
+\begin{tikzpicture}[node distance=0.9cm]
+    \node (internet) [draw, cloud, cloud puffs=10, cloud puff arc=120, aspect=2,
+                      fill=gray!20, minimum width=3cm] {Internet};
+    \node (router)   [process, below=of internet, fill=blue!10] {Router};
+    \node (server)   [database, below left=1.2cm and 0.3cm of router] {Server};
+    \node (pc)       [process, below right=1.2cm and 0.3cm of router] {User PC};
+
+    \draw [darrow] (internet) -- (router);
+    \draw [darrow] (router.south) -- ++(0,-0.45) -| (server.north);
+    \draw [darrow] (router.south) -- ++(0,-0.45) -| (pc.north);
 \end{tikzpicture}
 \end{center}
 
-\subsection{26. Entity-Relationship Diagram (ERD)}
+\diagram[22]{Entity-Relationship Diagram (ERD)}
 \begin{center}
-\begin{tikzpicture}[node distance=3cm]
-    \node[entity] (user)    {User};
-    \node[attribute] (uid)  [above left of=user]  {\key{ID}}     edge (user);
-    \node[attribute] (name) [above right of=user] {Name}         edge (user);
-    \node[relationship] (owns) [right of=user] {Owns}            edge (user);
-    \node[entity] (account) [right of=owns]    {Account}         edge (owns);
-    \node[attribute] (accid) [above right of=account] {\key{Acc\#}} edge (account);
+\begin{tikzpicture}[node distance=1.2cm]
+    \node[entity] (user) {User};
+    \node[attribute] (uid)  [above left=0.6cm and 0.1cm of user]  {\key{ID}} edge (user);
+    \node[attribute] (name) [above right=0.6cm and 0.1cm of user] {Name}     edge (user);
+    \node[relationship] (owns) [right=of user] {Owns};
+    \node[entity] (account) [right=of owns] {Account};
+    \node[attribute] (accid) [above=0.6cm of account] {\key{Acc\#}} edge (account);
+    \node[relationship] (has) [below=of account] {Has};
+    \node[entity] (txn) [below=of has] {Transaction};
+
+    \draw (user)    -- node[above, font=\small] {1} (owns);
+    \draw (owns)    -- node[above, font=\small] {N} (account);
+    \draw (account) -- node[right, font=\small] {1} (has);
+    \draw (has)     -- node[right, font=\small] {N} (txn);
 \end{tikzpicture}
 \end{center}
 
-\subsection{27. UML (Unified Modeling Language) Class Diagram}
-Using the \texttt{shapes.multipart} library to create split rectangles for attributes/methods.
+\diagram[20]{UML Class Diagram}
+Classes use \texttt{shapes.multipart}; the hollow triangle marks inheritance.
 \begin{center}
-\begin{tikzpicture}
-    \node[draw, rectangle split, rectangle split parts=3,
-          rectangle split part fill={blue!15, white, white},
-          minimum width=4.5cm] (class) {
-        \textbf{Car}
+\begin{tikzpicture}[
+    class/.style={draw, rectangle split, rectangle split parts=3, align=left,
+                  minimum width=3.6cm, font=\small,
+                  rectangle split part fill={blue!15, white, white}}]
+    \node[class] (vehicle) {
+        \textbf{Vehicle}
         \nodepart{two}
-        \texttt{+ speed : int}\par
-        \texttt{+ color : string}
+        \texttt{- speed : int}\\
+        \texttt{- color : string}
         \nodepart{three}
-        \texttt{+ drive() : void}\par
+        \texttt{+ drive() : void}\\
         \texttt{+ brake() : void}
     };
+    \node[class, below left=1.4cm and -0.4cm of vehicle] (car) {
+        \textbf{Car}
+        \nodepart{two}
+        \texttt{- doors : int}
+        \nodepart{three}
+        \texttt{+ openTrunk() : void}
+    };
+    \node[class, below right=1.4cm and -0.4cm of vehicle] (truck) {
+        \textbf{Truck}
+        \nodepart{two}
+        \texttt{- payload : float}
+        \nodepart{three}
+        \texttt{+ load() : void}
+    };
+    \draw[thick, -{Triangle[open, length=4mm, width=4mm]}]
+        (car.north) |- ($(vehicle.south)+(0,-0.6)$) -- (vehicle.south);
+    \draw[thick, -{Triangle[open, length=4mm, width=4mm]}]
+        (truck.north) |- ($(vehicle.south)+(0,-0.6)$) -- (vehicle.south);
 \end{tikzpicture}
 \end{center}
 
-\subsection{28. Circuit Schematic}
+\diagram{Circuit Schematic}
+A simple battery--switch--resistor--LED loop drawn with plain TikZ.
 \begin{center}
-\begin{circuitikz}
-    \draw (0,0)
-        to[battery, l=$9\,\mathrm{V}$] (0,3)
-        to[switch, l=S1]               (3,3)
-        to[R, l=$100\,\Omega$]         (3,1.5)
-        to[led, l=LED]                 (3,0)
-        -- (0,0);
-\end{circuitikz}
+\begin{tikzpicture}[line cap=round, font=\small]
+    % battery (long plate = positive)
+    \draw (0,0) -- (0,1.1);
+    \draw (-0.45,1.1) -- (0.45,1.1);
+    \draw (-0.22,1.4) -- (0.22,1.4);
+    \draw (0,1.4) -- (0,3) -- (1.3,3);
+    \node[left] at (-0.5,1.25) {9\,V};
+    % switch
+    \fill (1.3,3) circle (1.5pt) (2.1,3) circle (1.5pt);
+    \draw (1.3,3) -- (2.0,3.45);
+    \draw (2.1,3) -- (3.5,3);
+    \node[above] at (1.7,3.45) {S1};
+    % resistor
+    \draw (3.5,3) -- (3.5,2.7);
+    \draw (3.3,2.7) rectangle (3.7,1.7);
+    \draw (3.5,1.7) -- (3.5,1.5);
+    \node[right] at (3.8,2.2) {$100\,\Omega$};
+    % LED
+    \draw (3.2,1.5) -- (3.8,1.5) -- (3.5,0.9) -- cycle;
+    \draw (3.2,0.9) -- (3.8,0.9);
+    \draw (3.5,0.9) -- (3.5,0) -- (0,0);
+    \draw[-{Stealth}] (4.0,1.4) -- (4.5,1.8);
+    \draw[-{Stealth}] (4.1,1.1) -- (4.6,1.5);
+    \node[right] at (4.6,0.9) {LED};
+\end{tikzpicture}
 \end{center}
 
 % ============================================================
 \section{Additional Diagram Types}
 % ============================================================
 
-\subsection{29. UML (Unified Modeling Language) Sequence Diagram}
+\diagram{UML Sequence Diagram}
 Models the time-ordered interaction between objects or services.
 \begin{center}
 \begin{tikzpicture}[font=\small]
-    % Lifelines
     \foreach \x/\name in {0/Client, 3/Server, 6/Database} {
-        \node[draw, fill=blue!10, minimum width=1.8cm, minimum height=0.6cm]
-            at (\x, 0) {\name};
-        \draw[dashed, gray] (\x,-0.3) -- (\x,-5);
+        \node[draw, fill=blue!10, minimum width=1.8cm, minimum height=0.6cm] at (\x, 0) {\name};
+        \draw[dashed, gray] (\x,-0.3) -- (\x,-4.2);
     }
-    % Messages (horizontal arrows)
-    \draw[arrow] (0,-0.8) -- node[above]{\footnotesize HTTP GET} (3,-0.8);
-    \draw[arrow] (3,-1.5) -- node[above]{\footnotesize SQL Query} (6,-1.5);
-    \draw[arrow] (6,-2.2) -- node[above]{\footnotesize Result Set} (3,-2.2);
-    \draw[arrow] (3,-3.0) -- node[above]{\footnotesize JSON Response} (0,-3.0);
-    % Activation boxes
-    \draw[fill=orange!20] (2.8,-0.8) rectangle (3.2,-3.0);
-    \draw[fill=orange!20] (5.8,-1.5) rectangle (6.2,-2.2);
+    % Activation boxes first, so the arrows are drawn on top of them
+    \draw[fill=orange!20] (-0.1,-0.8) rectangle (0.1,-3.0);
+    \draw[fill=orange!20] ( 2.9,-0.8) rectangle (3.1,-3.0);
+    \draw[fill=orange!20] ( 5.9,-1.5) rectangle (6.1,-2.2);
+
+    \draw[arrow] (0.1,-0.8) -- node[above]{\footnotesize HTTP GET}      (2.9,-0.8);
+    \draw[arrow] (3.1,-1.5) -- node[above]{\footnotesize SQL query}     (5.9,-1.5);
+    \draw[arrow, dashed] (5.9,-2.2) -- node[above]{\footnotesize result set}    (3.1,-2.2);
+    \draw[arrow, dashed] (2.9,-3.0) -- node[above]{\footnotesize JSON response} (0.1,-3.0);
 \end{tikzpicture}
 \end{center}
 
-\subsection{30. State Machine Diagram}
+\diagram{State Machine Diagram}
 Models system states and the events that trigger transitions.
 \begin{center}
-\begin{tikzpicture}[node distance=3.5cm,
+\begin{tikzpicture}[
     state/.style={circle, draw, fill=teal!15, minimum size=1.4cm, font=\small}]
-    \node[state] (idle)    {Idle};
-    \node[state, right of=idle]    (active)  {Active};
-    \node[state, right of=active]  (error)   {Error};
+    \node[state] (idle)   at (0,0) {Idle};
+    \node[state] (active) at (4,0) {Active};
+    \node[state] (error)  at (8,0) {Error};
 
-    \draw[arrow] (-1.5,0) -- (idle);
-    \draw[arrow, bend left=30] (idle)   to node[above]{\footnotesize start}  (active);
-    \draw[arrow, bend left=30] (active) to node[below]{\footnotesize stop}   (idle);
-    \draw[arrow, bend left=30] (active) to node[above]{\footnotesize fail}   (error);
-    \draw[arrow, bend left=30] (error)  to node[below]{\footnotesize reset}  (idle);
+    \draw[arrow] (-1.6,0) -- (idle);
+    \draw[arrow, bend left=30] (idle)   to node[above]{\footnotesize start} (active);
+    \draw[arrow, bend left=30] (active) to node[below]{\footnotesize stop}  (idle);
+    \draw[arrow, bend left=30] (active) to node[above]{\footnotesize fail}  (error);
+    \draw[arrow, bend left=55] (error)  to node[below]{\footnotesize reset} (idle);
 \end{tikzpicture}
 \end{center}
 
-\subsection{31. Timeline Diagram}
+\diagram{Timeline Diagram}
 A linear representation of milestones on a time axis.
-% Fixed: ifthenelse with string comparison is invalid in pgfmath.
-% Each milestone is an explicit node to correctly alternate above/below.
 \begin{center}
 \begin{tikzpicture}[font=\small]
-    \draw[very thick, ->, >=Stealth] (0,0) -- (11.5,0);
-    % Tick marks
+    \draw[very thick, -{Stealth}] (0,0) -- (11.5,0);
     \foreach \x in {1, 3, 5.5, 8, 10} {
         \fill[blue!60] (\x,0) circle (4pt);
-        \draw[gray, thin] (\x,0.15) -- (\x,-0.15);
     }
-    % Labels alternating above and below manually
-    \node[above, font=\footnotesize\bfseries, text=blue!70!black] at (1,   0.15) {Kickoff};
-    \node[below, font=\footnotesize\bfseries, text=blue!70!black] at (3,  -0.15) {Design};
-    \node[above, font=\footnotesize\bfseries, text=blue!70!black] at (5.5, 0.15) {Development};
-    \node[below, font=\footnotesize\bfseries, text=blue!70!black] at (8,  -0.15) {Testing};
-    \node[above, font=\footnotesize\bfseries, text=blue!70!black] at (10,  0.15) {Launch};
+    \node[above, font=\footnotesize\bfseries, text=blue!70!black] at (1,    0.15) {Kickoff};
+    \node[below, font=\footnotesize\bfseries, text=blue!70!black] at (3,   -0.15) {Design};
+    \node[above, font=\footnotesize\bfseries, text=blue!70!black] at (5.5,  0.15) {Development};
+    \node[below, font=\footnotesize\bfseries, text=blue!70!black] at (8,   -0.15) {Testing};
+    \node[above, font=\footnotesize\bfseries, text=blue!70!black] at (10,   0.15) {Launch};
 \end{tikzpicture}
 \end{center}
 
-\subsection{32. Data Pipeline Diagram}
+\diagram{Data Pipeline Diagram}
 Shows the flow of data between processing stages (ETL-style).
 \begin{center}
-\begin{tikzpicture}[node distance=2.2cm,
-    pipe/.style={rectangle, rounded corners=4pt, minimum width=2.2cm,
-                 minimum height=0.9cm, text centered, draw=black}]
-    \node[pipe, fill=green!15]  (src)    {Source DB};
-    \node[pipe, fill=yellow!20, right of=src]  (ext)  {Extract};
-    \node[pipe, fill=orange!20, right of=ext]  (trn)  {Transform};
-    \node[pipe, fill=red!15,    right of=trn]  (load) {Load};
-    \node[pipe, fill=blue!15,   right of=load] (dw)   {Data Warehouse};
-
+\begin{tikzpicture}[node distance=0.5cm,
+    pipe/.style={rectangle, rounded corners=4pt, minimum width=2.2cm, minimum height=1cm,
+                 text width=1.8cm, align=center, draw=black, font=\small}]
+    \node[pipe, fill=green!15]  (src)  {Source DB};
+    \node[pipe, fill=yellow!20, right=of src]  (ext)  {Extract};
+    \node[pipe, fill=orange!20, right=of ext]  (trn)  {Transform};
+    \node[pipe, fill=red!15,    right=of trn]  (load) {Load};
+    \node[pipe, fill=blue!15,   right=of load] (dw)   {Data Warehouse};
     \draw[arrow] (src) -- (ext);
     \draw[arrow] (ext) -- (trn);
     \draw[arrow] (trn) -- (load);
@@ -600,50 +708,49 @@ Shows the flow of data between processing stages (ETL-style).
 \end{tikzpicture}
 \end{center}
 
-\subsection{33. Radar / Spider Chart (using pgfplots)}
+\diagram{Radar / Spider Chart}
 Compares multiple variables on axes radiating from the same centre.
 \begin{center}
-\begin{tikzpicture}
-\begin{polaraxis}[
-    title={Skills Assessment},
-    xtick={0,60,120,180,240,300},
-    xticklabels={Python, Databases, LaTeX, Writing, Math, Networking},
-    ymin=0, ymax=10,
-    ytick={2,4,6,8,10},
-    width=0.55\textwidth
-]
-    \addplot[thick, blue!70, fill=blue!20, opacity=0.6]
-        coordinates {(0,8) (60,6) (120,9) (180,7) (240,8) (300,5) (360,8)};
-    \addplot[thick, red!70, fill=red!20, opacity=0.5]
-        coordinates {(0,5) (60,9) (120,4) (180,8) (240,6) (300,7) (360,5)};
-    \legend{Student A, Student B}
-\end{polaraxis}
+\begin{tikzpicture}[font=\small]
+    \foreach \r in {2,4,6,8,10}
+        \draw[gray!50] (90:{\r*0.3}) -- (30:{\r*0.3}) -- (-30:{\r*0.3}) -- (-90:{\r*0.3})
+                       -- (-150:{\r*0.3}) -- (150:{\r*0.3}) -- cycle;
+    \foreach \a/\n in {90/Python, 30/Databases, -30/{\LaTeX}, -90/Writing, -150/Math, 150/Networking} {
+        \draw[gray!50] (0,0) -- (\a:3);
+        \node at (\a:3.6) {\n};
+    }
+    \draw[thick, blue!70, fill=blue!20, fill opacity=0.5]
+        (90:2.4) -- (30:1.8) -- (-30:2.7) -- (-90:2.1) -- (-150:2.4) -- (150:1.5) -- cycle;
+    \draw[thick, red!70, fill=red!20, fill opacity=0.5]
+        (90:1.5) -- (30:2.7) -- (-30:1.2) -- (-90:2.4) -- (-150:1.8) -- (150:2.1) -- cycle;
+    \node[draw, fill=blue!20, minimum size=2.5mm, inner sep=0] at (4.3,2) {};
+    \node[right] at (4.5,2) {Student A};
+    \node[draw, fill=red!20, minimum size=2.5mm, inner sep=0] at (4.3,1.4) {};
+    \node[right] at (4.5,1.4) {Student B};
 \end{tikzpicture}
 \end{center}
 
-\subsection{34. Layered Architecture Diagram}
+\diagram{Layered Architecture Diagram}
 Represents software layers (Presentation, Logic, Data) stacked vertically.
-% Fixed: \foreach with '!' in color names causes token split errors.
-% Each layer is drawn explicitly instead.
 \begin{center}
 \begin{tikzpicture}[font=\small]
     \draw[fill=blue!20,   draw=black] (-3,3) rectangle (3,3.85);
     \node at (0,3.42) {\textbf{Presentation Layer (UI)}};
-
     \draw[fill=orange!20, draw=black] (-3,2) rectangle (3,2.85);
     \node at (0,2.42) {\textbf{Business Logic Layer}};
-
     \draw[fill=green!20,  draw=black] (-3,1) rectangle (3,1.85);
     \node at (0,1.42) {\textbf{Data Access Layer}};
-
     \draw[fill=gray!20,   draw=black] (-3,0) rectangle (3,0.85);
     \node at (0,0.42) {\textbf{Database Layer}};
+    \draw[darrow] (3.4,3.4) -- (3.4,0.4);
+    \node[rotate=90, font=\footnotesize] at (3.8,1.9) {calls go downward, data upward};
 \end{tikzpicture}
 \end{center}
 
-\subsection{35. Comparison Table (Feature Matrix)}
+\diagram{Comparison Table (Feature Matrix)}
 A structured matrix comparing products or options across features.
 \begin{center}
+\renewcommand{\arraystretch}{1.2}
 \begin{tabular}{lccc}
     \toprule
     \textbf{Feature} & \textbf{Basic} & \textbf{Pro} & \textbf{Enterprise} \\
@@ -655,6 +762,502 @@ A structured matrix comparing products or options across features.
     Priority Support  & $\times$ & $\times$     & $\checkmark$ \\
     \bottomrule
 \end{tabular}
+\end{center}
+
+% ============================================================
+\section{Machine Learning \& AI Diagrams}
+% ============================================================
+
+\diagram{Feed-Forward Neural Network}
+\begin{center}
+\begin{tikzpicture}[neuron/.style={circle, draw, minimum size=0.7cm, inner sep=0pt}]
+    \foreach \i/\y in {1/1.1, 2/0, 3/-1.1}
+        \node[neuron, fill=green!25] (I\i) at (0,\y) {};
+    \foreach \i/\y in {1/1.65, 2/0.55, 3/-0.55, 4/-1.65} {
+        \node[neuron, fill=blue!20]   (H\i) at (2.4,\y) {};
+        \node[neuron, fill=blue!20]   (G\i) at (4.8,\y) {};
+    }
+    \foreach \i/\y in {1/0.55, 2/-0.55}
+        \node[neuron, fill=orange!30] (O\i) at (7.2,\y) {};
+
+    \begin{scope}[on background layer]
+        \foreach \i in {1,2,3} \foreach \j in {1,...,4} \draw[gray!60] (I\i) -- (H\j);
+        \foreach \i in {1,...,4} \foreach \j in {1,...,4} \draw[gray!60] (H\i) -- (G\j);
+        \foreach \i in {1,...,4} \foreach \j in {1,2} \draw[gray!60] (G\i) -- (O\j);
+    \end{scope}
+    \node[font=\small] at (0,-2.5)   {Input layer};
+    \node[font=\small] at (3.6,-2.5) {Hidden layers};
+    \node[font=\small] at (7.2,-2.5) {Output layer};
+\end{tikzpicture}
+\end{center}
+
+\diagram{Machine Learning Pipeline}
+\begin{center}
+\begin{tikzpicture}[node distance=0.5cm,
+    stg/.style={rectangle, rounded corners=4pt, draw, minimum width=2.2cm, minimum height=1cm,
+                 text width=1.9cm, align=center, font=\small}]
+    \node[stg, fill=green!15]  (collect) {Collect Data};
+    \node[stg, fill=yellow!20, right=of collect] (clean) {Clean \& Split};
+    \node[stg, fill=orange!20, right=of clean]   (train) {Train Model};
+    \node[stg, fill=red!15,    right=of train]   (eval)  {Evaluate};
+    \node[stg, fill=blue!15,   right=of eval]    (deploy){Deploy};
+    \draw[arrow] (collect) -- (clean);
+    \draw[arrow] (clean)   -- (train);
+    \draw[arrow] (train)   -- (eval);
+    \draw[arrow] (eval)    -- (deploy);
+    \draw[arrow, dashed] (eval.south) -- ++(0,-0.7) -| (train.south)
+        node[pos=0.25, below, font=\scriptsize] {tune \& retrain};
+\end{tikzpicture}
+\end{center}
+
+\diagram[20]{Explainable AI (XAI) Workflow}
+An explainer probes a black-box model so that the user receives both a prediction and a reason.
+\begin{center}
+\begin{tikzpicture}[node distance=0.5cm,
+    box/.style={process, text width=1.8cm, minimum width=2.1cm, font=\small}]
+    \node[io, text width=1.6cm, font=\small] (in)    {Input data};
+    \node[box, fill=gray!30, right=of in]   (model) {Black-box model};
+    \node[box, fill=green!15, right=of model] (pred) {Prediction};
+    \node[box, fill=yellow!20, right=of pred] (user) {Domain expert};
+    \node[box, fill=orange!20, below=1.3cm of model, text width=2.5cm, minimum width=2.7cm] (expl) {Explainer\\(LIME / SHAP / Grad-CAM)};
+    \node[box, fill=orange!10, below=1.3cm of pred, text width=2.1cm] (exp)  {Explanation};
+
+    \draw[arrow] (in) -- (model);
+    \draw[arrow] (model) -- (pred);
+    \draw[arrow] (pred) -- (user);
+    \draw[arrow] (model) -- node[right, lbl]{probe} (expl);
+    \draw[arrow] (expl) -- (exp);
+    \draw[arrow] (exp) -| (user);
+\end{tikzpicture}
+\end{center}
+
+\diagram{Confusion Matrix}
+\begin{center}
+\begin{tikzpicture}
+    \foreach \x/\y/\txt/\col in {0/1/{TP\\85}/green!35, 1/1/{FN\\15}/red!25,
+                                 0/0/{FP\\10}/red!25,   1/0/{TN\\90}/green!35}
+        \node[draw, minimum size=2cm, fill=\col, align=center, font=\bfseries] at (2*\x, 2*\y) {\txt};
+    \node[font=\small] at (0,3.4)  {Pred. +};
+    \node[font=\small] at (2,3.4)  {Pred. $-$};
+    \node[font=\small, rotate=90] at (-1.4,2) {Actual +};
+    \node[font=\small, rotate=90] at (-1.4,0) {Actual $-$};
+    \node[anchor=west, align=left, font=\small] at (3.4,1)
+        {Accuracy $=\frac{TP+TN}{N}=87.5\%$\\[3pt]
+         Precision $=\frac{TP}{TP+FP}\approx 89.5\%$\\[3pt]
+         Recall $=\frac{TP}{TP+FN}=85\%$};
+\end{tikzpicture}
+\end{center}
+
+\diagram{Training and Validation Loss Curve}
+\begin{center}
+\begin{tikzpicture}[x=0.2cm, y=3.6cm, font=\small]
+    \foreach \t in {0,10,...,50} {
+        \draw[gray!30] (\t,0) -- (\t,1.3);
+        \node[below, font=\scriptsize] at (\t,0) {\t};
+    }
+    \foreach \t in {0,0.5,1.0} {
+        \draw[gray!30] (0,\t) -- (50,\t);
+        \node[left, font=\scriptsize] at (0,\t) {\t};
+    }
+    \draw[thick] (0,0) rectangle (50,1.3);
+    \draw[thick, blue!70, domain=1:50, samples=25, variable=\t] plot ({\t},{0.10+1.2*exp(-0.12*\t)});
+    \draw[thick, red!70,  domain=1:50, samples=25, variable=\t] plot ({\t},{0.20+1.1*exp(-0.10*\t)+0.003*\t});
+    \node[below=4mm] at (25,0) {Epoch};
+    \node[rotate=90, above=6mm] at (0,0.65) {Loss};
+    \draw[blue!70, thick] (34,1.2) -- (38,1.2); \node[right, font=\footnotesize] at (38,1.2) {Training};
+    \draw[red!70,  thick] (34,1.08) -- (38,1.08); \node[right, font=\footnotesize] at (38,1.08) {Validation};
+\end{tikzpicture}
+\end{center}
+Validation loss turning upward while training loss keeps falling is the classic sign of overfitting.
+
+\diagram{Feature Importance Bar Chart (XAI style)}
+Illustrative SHAP-style values: mean absolute contribution of each feature to the model output.
+\begin{center}
+\begin{tikzpicture}[font=\small]
+    \foreach \i/\n/\v in {0/Nitrogen/0.12, 1/Humidity/0.18, 2/Temperature/0.27, 3/Soil pH/0.33, 4/Rainfall/0.42} {
+        \fill[blue!50] (0,\i*0.8) rectangle (\v*12,\i*0.8+0.5);
+        \draw (0,\i*0.8) rectangle (\v*12,\i*0.8+0.5);
+        \node[left]  at (0,\i*0.8+0.25) {\n};
+        \node[right, font=\footnotesize] at (\v*12,\i*0.8+0.25) {\v};
+    }
+    \draw[thick] (0,-0.2) -- (0,4);
+    \node[below=2mm] at (3,-0.2) {Mean $|$SHAP value$|$};
+\end{tikzpicture}
+\end{center}
+
+% ============================================================
+\section{Security \& Networking Diagrams}
+% ============================================================
+
+\diagram[22]{Cyber Kill Chain}
+Seven attacker stages; defenders can break the chain at any step.
+\begin{center}
+\begin{tikzpicture}
+    \foreach \i/\p/\txt/\ex in {0/10/Reconnaissance/OSINT and port scans,
+                                1/20/Weaponization/Build exploit payload,
+                                2/30/Delivery/Phishing and USB drop,
+                                3/40/Exploitation/Exploit a vulnerability,
+                                4/50/Installation/Backdoor and persistence,
+                                5/60/Command and Control/Remote control channel,
+                                6/70/Actions on Objectives/Data theft and ransomware}
+    {
+        \node[draw, rounded corners, fill=red!\p, minimum width=4.2cm, minimum height=0.7cm,
+              anchor=north west, font=\small\bfseries] (k\i) at (0.9*\i, -0.95*\i) {\txt};
+        \node[anchor=west, font=\footnotesize] at ([xshift=2mm]k\i.east) {\ex};
+    }
+    \foreach \i/\j in {0/1, 1/2, 2/3, 3/4, 4/5, 5/6}
+        \draw[arrow] ([xshift=1.2cm]k\i.south west) -- ([xshift=0.3cm]k\j.north west);
+\end{tikzpicture}
+\end{center}
+
+\diagram[20]{Attack Tree}
+Internal nodes are OR-combined sub-goals; leaves are concrete attacker actions.
+\begin{center}
+\begin{tikzpicture}[tn/.style={draw, rounded corners, fill=red!8, font=\small, inner sep=3pt}]
+    \node[tn, fill=red!25] (root) at (0,-0.2) {Gain server access};
+    \node[tn] (m1) at (4.0,2.0)  {Steal credentials};
+    \node[tn] (m2) at (4.0,-0.7) {Exploit vulnerability};
+    \node[tn] (m3) at (4.0,-2.5) {Physical access};
+    \node[tn] (l1) at (8.6,3.2)  {Phishing};
+    \node[tn] (l2) at (8.6,2.0)  {SSH brute force};
+    \node[tn] (l3) at (8.6,0.8)  {Keylogger malware};
+    \node[tn] (l4) at (8.6,-0.1) {Unpatched service};
+    \node[tn] (l5) at (8.6,-1.3) {SQL injection};
+    \node[tn] (l6) at (8.6,-2.5) {Stolen device};
+    \foreach \m in {m1,m2,m3} \draw[arrow] (root.east) -- (\m.west);
+    \foreach \m/\l in {m1/l1, m1/l2, m1/l3, m2/l4, m2/l5, m3/l6}
+        \draw[arrow] (\m.east) -- (\l.west);
+\end{tikzpicture}
+\end{center}
+
+\diagram{DMZ Network Topology}
+\begin{center}
+\begin{tikzpicture}[font=\small,
+    fw/.style={draw, fill=orange!35, minimum width=0.9cm, minimum height=2.8cm,
+               font=\footnotesize\bfseries},
+    host/.style={draw, rounded corners, fill=blue!10, minimum width=2.1cm,
+                 minimum height=0.8cm, font=\footnotesize}]
+    \node[draw, cloud, cloud puffs=10, cloud puff arc=120, aspect=2, fill=gray!20] (net) at (0,0) {Internet};
+    \node[fw]   (fw1) at (2.8,0)    {FW1};
+    \node[host] (web) at (5.6,0.7)  {Web server};
+    \node[host] (dns) at (5.6,-0.7) {DNS / Mail};
+    \node[fw]   (fw2) at (8.4,0)    {FW2};
+    \node[host] (ws)  at (11.3,0.7) {Workstations};
+    \node[host] (db)  at (11.3,-0.7){Database};
+
+    \node[draw, dashed, rounded corners, inner sep=7pt, fit=(web)(dns),
+          label={[font=\footnotesize\bfseries]below:DMZ}] {};
+    \node[draw, dashed, rounded corners, inner sep=7pt, fit=(ws)(db),
+          label={[font=\footnotesize\bfseries]below:Internal LAN}] {};
+
+    \draw[darrow] (net) -- (fw1);
+    \draw[darrow] (fw1.east) -- (web.west);
+    \draw[darrow] (fw1.east) -- (dns.west);
+    \draw[darrow] (web.east) -- (fw2.west);
+    \draw[darrow] (dns.east) -- (fw2.west);
+    \draw[darrow] (fw2.east) -- (ws.west);
+    \draw[darrow] (fw2.east) -- (db.west);
+\end{tikzpicture}
+\end{center}
+
+\diagram[22]{TLS Handshake (Sequence Diagram)}
+\begin{center}
+\begin{tikzpicture}[font=\small]
+    \foreach \x/\name in {0/Client, 7/Server} {
+        \node[draw, fill=blue!10, minimum width=1.8cm, minimum height=0.6cm] at (\x,0) {\name};
+        \draw[dashed, gray] (\x,-0.3) -- (\x,-5.3);
+    }
+    \draw[arrow] (0,-0.9) -- node[above, font=\footnotesize] {ClientHello (cipher suites, random)} (7,-0.9);
+    \draw[arrow] (7,-1.8) -- node[above, font=\footnotesize] {ServerHello + certificate} (0,-1.8);
+    \draw[arrow] (0,-2.7) -- node[above, font=\footnotesize] {Key exchange (client verifies certificate)} (7,-2.7);
+    \draw[arrow] (7,-3.6) -- node[above, font=\footnotesize] {Finished (session keys derived)} (0,-3.6);
+    \draw[{Stealth}-{Stealth}, ultra thick, green!50!black] (0,-4.7) --
+        node[above, font=\footnotesize, text=black] {Encrypted application data} (7,-4.7);
+\end{tikzpicture}
+\end{center}
+
+\diagram[26]{Defense in Depth}
+\begin{center}
+\begin{tikzpicture}
+    \foreach \r/\p/\txt in {4.2/10/Policy and Physical, 3.5/20/Perimeter,
+                            2.8/30/Network, 2.1/40/Host and Endpoint, 1.4/50/Application}
+    {
+        \filldraw[fill=blue!\p, draw=blue!60!black] (0,0) circle (\r);
+        \node[font=\footnotesize\bfseries] at (0,\r-0.3) {\txt};
+    }
+    \filldraw[fill=red!40, draw=red!60!black] (0,-0.25) circle (0.7);
+    \node[font=\footnotesize\bfseries] at (0,-0.25) {Data};
+\end{tikzpicture}
+\end{center}
+
+\diagram{Log Monitoring / SIEM Pipeline}
+A detector counts failed logins per source address and triggers an automated response.
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm,
+    box/.style={process, text width=2cm, minimum width=2.3cm}]
+    \node[io, text width=1.8cm] (logs) {auth.log};
+    \node[box, right=of logs]   (parse) {Parse and normalize};
+    \node[box, right=of parse, fill=orange!20] (detect) {Detect (threshold)};
+    \node[box, right=1.5cm of detect, fill=red!15] (resp) {Respond};
+    \node[database, below=1.2cm of parse]  (store) {Event DB};
+    \node[box, below=1.2cm of resp, fill=gray!20] (fw) {Firewall rule};
+
+    \draw[arrow] (logs) -- (parse);
+    \draw[arrow] (parse) -- (detect);
+    \draw[arrow] (detect) -- node[above, lbl]{$\geq 5$ fails} node[below, lbl]{in 60 s} (resp);
+    \draw[arrow] (parse) -- (store);
+    \draw[arrow] (detect.south) |- (store.east);
+    \draw[arrow] (resp) -- node[right, lbl]{block IP} (fw);
+\end{tikzpicture}
+\end{center}
+
+\diagram[20]{Risk Heat Map}
+Risk $=$ likelihood $\times$ impact.
+\begin{center}
+\begin{tikzpicture}
+    \foreach \x in {1,...,5} {
+        \foreach \y in {1,...,5} {
+            \pgfmathtruncatemacro{\s}{\x*\y*4}
+            \pgfmathtruncatemacro{\v}{\x*\y}
+            \node[draw, minimum size=0.95cm, fill=red!\s!yellow, font=\footnotesize] at (\x,\y) {\v};
+        }
+    }
+    \node[below] at (3,0.4) {Impact $\rightarrow$};
+    \node[rotate=90, above] at (0.4,3) {Likelihood $\rightarrow$};
+\end{tikzpicture}
+\end{center}
+
+% ============================================================
+\section{Software Architecture \& Development Diagrams}
+% ============================================================
+
+\diagram{MVT Web Framework Request Flow}
+Model--View--Template flow, as used by Django-style frameworks.
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, box/.style={process, minimum width=2.3cm}]
+    \node[box] (browser) {Browser};
+    \node[box, right=of browser] (urls) {URL router};
+    \node[box, right=of urls] (view) {View};
+    \node[box, right=of view, fill=green!15] (tmpl) {Template};
+    \node[box, below=1.4cm of view, fill=orange!20] (model) {Model};
+    \node[database, right=of model] (db) {DB};
+
+    \draw[arrow] (browser) -- node[above, lbl]{request} (urls);
+    \draw[arrow] (urls) -- node[above, lbl]{route} (view);
+    \draw[arrow] (view) -- node[above, lbl]{context} (tmpl);
+    \draw[darrow] (view) -- node[right, lbl]{query} (model);
+    \draw[darrow] (model) -- node[above, lbl]{SQL} (db);
+    \draw[arrow, dashed] (tmpl.north) -- ++(0,0.9) -| (browser.north);
+    \node[above, font=\scriptsize] at ($(browser.north)!0.5!(tmpl.north)+(0,0.9)$) {HTTP response (HTML)};
+\end{tikzpicture}
+\end{center}
+
+\diagram{UML Use Case Diagram}
+\begin{center}
+\begin{tikzpicture}[uc/.style={ellipse, draw, fill=blue!8, minimum width=3.2cm,
+                               minimum height=0.9cm, font=\small}]
+    \draw[rounded corners] (2,-3.4) rectangle (9,1.6);
+    \node[font=\bfseries\small] at (5.5,1.25) {Log Monitoring System};
+    \node[uc] (u1) at (5.5,0.4)  {View alerts};
+    \node[uc] (u2) at (5.5,-0.6) {Export reports};
+    \node[uc] (u3) at (5.5,-1.6) {Configure rules};
+    \node[uc] (u4) at (5.5,-2.6) {Block IP address};
+
+    \stickman{0.5}{0}
+    \node[font=\small] at (0.5,-0.9) {Analyst};
+    \stickman{10.5}{0}
+    \node[font=\small] at (10.5,-0.9) {Admin};
+
+    \draw (0.7,0.3) -- (u1.west);
+    \draw (0.7,0.3) -- (u2.west);
+    \draw (10.3,0.3) -- (u1.east);
+    \draw (10.3,0.3) -- (u3.east);
+    \draw (10.3,0.3) -- (u4.east);
+\end{tikzpicture}
+\end{center}
+
+\diagram{CI/CD Pipeline}
+\begin{center}
+\begin{tikzpicture}[node distance=0.5cm,
+    stg/.style={rectangle, rounded corners=4pt, draw, minimum width=2.2cm, minimum height=1cm,
+                 text width=1.9cm, align=center, font=\small}]
+    \node[stg, fill=green!15]  (commit) {Commit};
+    \node[stg, fill=yellow!20, right=of commit] (build) {Build};
+    \node[stg, fill=orange!20, right=of build]  (test)  {Test};
+    \node[stg, fill=red!15,    right=of test]   (scan)  {Security scan};
+    \node[stg, fill=blue!15,   right=of scan]   (deploy){Deploy};
+    \draw[arrow] (commit) -- (build);
+    \draw[arrow] (build)  -- (test);
+    \draw[arrow] (test)   -- (scan);
+    \draw[arrow] (scan)   -- (deploy);
+    \draw[arrow, dashed, red!70!black] (test.south) -- ++(0,-0.8) -| (commit.south)
+        node[pos=0.25, below, font=\scriptsize] {fail: fix and push again};
+\end{tikzpicture}
+\end{center}
+
+\diagram{Git Branching and Merging}
+\begin{center}
+\begin{tikzpicture}[commit/.style={circle, draw, fill=#1, minimum size=0.5cm, inner sep=0pt}]
+    \draw[thick, gray] (0,0) -- (7.2,0);
+    \draw[thick, orange!80!black] (1.8,0) -- (2.7,-1.2) -- (4.5,-1.2) -- (5.4,0);
+    \foreach \x/\n in {0/C1, 1.8/C2, 5.4/C5, 7.2/C6}
+        \node[commit=blue!35, label={[font=\scriptsize]above:\n}] at (\x,0) {};
+    \foreach \x/\n in {2.7/F1, 3.6/F2, 4.5/F3}
+        \node[commit=orange!50, label={[font=\scriptsize]below:\n}] at (\x,-1.2) {};
+    \node[left, font=\small\bfseries] at (-0.4,0) {main};
+    \node[right, font=\small\bfseries, orange!80!black] at (4.9,-1.2) {feature/login};
+    \node[font=\scriptsize, align=center] at (5.4,0.9) {merge\\commit};
+\end{tikzpicture}
+\end{center}
+
+\diagram{Linked List}
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm,
+    ll/.style={draw, rectangle split, rectangle split horizontal, rectangle split parts=2,
+               minimum height=0.8cm, fill=blue!10}]
+    \node[ll] (a) {7  \nodepart{second} \phantom{x}};
+    \node[ll, right=of a] (b) {12 \nodepart{second} \phantom{x}};
+    \node[ll, right=of b] (c) {3  \nodepart{second} \phantom{x}};
+    \node[ll, right=of c] (d) {45 \nodepart{second} \phantom{x}};
+    \node[right=0.8cm of d, anchor=west] (null) {\texttt{NULL}};
+    \node[left=0.6cm of a, font=\small] (head) {head};
+    \foreach \p in {a,b,c,d} \fill (\p.two) circle (2pt);
+    \draw[arrow] (head) -- (a.west);
+    \draw[arrow] (a.two) -- (b.west |- a.two);
+    \draw[arrow] (b.two) -- (c.west |- b.two);
+    \draw[arrow] (c.two) -- (d.west |- c.two);
+    \draw[arrow] (d.two) -- (null.west |- d.two);
+\end{tikzpicture}
+\end{center}
+
+\diagram[18]{Binary Search Tree}
+\begin{center}
+\begin{tikzpicture}[tn/.style={circle, draw, minimum size=7mm, inner sep=1pt, fill=green!12}]
+    \node[tn] (n8)  at (0,0)      {8};
+    \node[tn] (n3)  at (-2.4,-1.2){3};
+    \node[tn] (n10) at (2.4,-1.2) {10};
+    \node[tn] (n1)  at (-3.6,-2.4){1};
+    \node[tn] (n6)  at (-1.2,-2.4){6};
+    \node[tn] (n14) at (3.6,-2.4) {14};
+    \node[tn] (n4)  at (-1.9,-3.6){4};
+    \node[tn] (n7)  at (-0.5,-3.6){7};
+    \node[tn] (n13) at (2.9,-3.6) {13};
+    \foreach \a/\b in {n8/n3, n8/n10, n3/n1, n3/n6, n10/n14, n6/n4, n6/n7, n14/n13}
+        \draw[thick] (\a) -- (\b);
+\end{tikzpicture}
+\end{center}
+
+\diagram{Finite Automaton (DFA)}
+Accepts every string over $\{a,b\}$ that ends in \texttt{ab}.
+\begin{center}
+\begin{tikzpicture}[st/.style={circle, draw, minimum size=1cm, fill=teal!10}]
+    \node[st] (q0) at (0,0) {$q_0$};
+    \node[st] (q1) at (3.5,0) {$q_1$};
+    \node[st, double, double distance=2pt, fill=green!15] (q2) at (7,0) {$q_2$};
+    \draw[arrow] (-1.3,0) -- (q0);
+    \draw[arrow] (q0) -- node[above, font=\small]{a} (q1);
+    \draw[arrow] (q0) to[loop above] node[above, font=\small]{b} (q0);
+    \draw[arrow] (q1) to[loop above] node[above, font=\small]{a} (q1);
+    \draw[arrow, bend left=30] (q1) to node[above, font=\small]{b} (q2);
+    \draw[arrow, bend left=30] (q2) to node[below, font=\small]{a} (q1);
+    \draw[arrow, bend left=55] (q2) to node[below, font=\small]{b} (q0);
+\end{tikzpicture}
+\end{center}
+
+% ============================================================
+\section{Charts \& Miscellaneous Diagrams}
+% ============================================================
+
+\diagram[22]{Pie Chart}
+Drawn with plain TikZ arcs; illustrative data.
+\begin{center}
+\begin{tikzpicture}
+    \foreach \a/\b/\c/\lab in {0/126/blue!50/Phishing 35\%,
+                               126/216/orange!50/Weak passwords 25\%,
+                               216/288/green!50/Unpatched software 20\%,
+                               288/331.2/red!40/Malware 12\%,
+                               331.2/360/yellow!60/Other 8\%}
+    {
+        \filldraw[fill=\c, draw=white, thick] (0,0) -- (\a:2) arc (\a:\b:2) -- cycle;
+        \node[font=\small] at ({(\a+\b)/2}:3.3) {\lab};
+    }
+\end{tikzpicture}
+\end{center}
+
+\diagram{Bar Chart}
+\begin{center}
+\begin{tikzpicture}[font=\small]
+    \foreach \i/\d/\v in {0/Mon/42, 1/Tue/38, 2/Wed/95, 3/Thu/51, 4/Fri/47, 5/Sat/120, 6/Sun/88} {
+        \fill[blue!50] (\i*1.3,0) rectangle (\i*1.3+0.9,\v*0.04);
+        \draw (\i*1.3,0) rectangle (\i*1.3+0.9,\v*0.04);
+        \node[above, font=\footnotesize] at (\i*1.3+0.45,\v*0.04) {\v};
+        \node[below] at (\i*1.3+0.45,0) {\d};
+    }
+    \draw[thick] (-0.3,0) -- (-0.3,5);
+    \draw[thick] (-0.3,0) -- (9.3,0);
+    \foreach \t in {0,50,100} {
+        \draw (-0.4,\t*0.04) -- (-0.3,\t*0.04);
+        \node[left, font=\scriptsize] at (-0.4,\t*0.04) {\t};
+    }
+    \node[rotate=90] at (-1.1,2.5) {Failed logins};
+\end{tikzpicture}
+\end{center}
+
+\diagram{Normal Distribution}
+\begin{center}
+\begin{tikzpicture}[x=1.6cm, y=10cm, font=\small]
+    \fill[blue!20] (-1,0) -- plot[domain=-1:1, samples=20, variable=\t] ({\t},{exp(-\t*\t/2)/sqrt(2*pi)}) -- (1,0) -- cycle;
+    \draw[thick, blue!70, domain=-3.5:3.5, samples=40, variable=\t] plot ({\t},{exp(-\t*\t/2)/sqrt(2*pi)});
+    \draw[thick] (-3.6,0) -- (3.6,0);
+    \foreach \t in {-3,...,3} {
+        \draw (\t,0) -- (\t,-0.008);
+        \node[below, font=\scriptsize] at (\t,-0.008) {\t};
+    }
+    \node at (0,0.15) {68\%};
+    \node[below=4mm] at (0,-0.01) {$z$};
+\end{tikzpicture}
+\end{center}
+
+\diagram[22]{Cycle Diagram (PDCA)}
+\begin{center}
+\begin{tikzpicture}[cyc/.style={circle, draw, minimum size=1.8cm, fill=#1, font=\bfseries}]
+    \node[cyc=blue!20]   (p) at (90:2.2)  {Plan};
+    \node[cyc=green!20]  (d) at (0:2.2)   {Do};
+    \node[cyc=yellow!30] (c) at (270:2.2) {Check};
+    \node[cyc=red!20]    (a) at (180:2.2) {Act};
+    \draw[arrow] (p) to[bend left=25] (d);
+    \draw[arrow] (d) to[bend left=25] (c);
+    \draw[arrow] (c) to[bend left=25] (a);
+    \draw[arrow] (a) to[bend left=25] (p);
+    \node[align=center, font=\small] at (0,0) {Continuous\\improvement};
+\end{tikzpicture}
+\end{center}
+
+\diagram[18]{Pyramid (DIKW Hierarchy)}
+\begin{center}
+\begin{tikzpicture}
+    \foreach \i/\p/\txt in {0/15/Data, 1/30/Information, 2/45/Knowledge, 3/60/Wisdom} {
+        \filldraw[fill=blue!\p, draw=blue!60!black]
+            (-5+\i,\i) -- (5-\i,\i) -- (4-\i,\i+1) -- (-4+\i,\i+1) -- cycle;
+        \node[font=\bfseries] at (0,\i+0.5) {\txt};
+    }
+\end{tikzpicture}
+\end{center}
+
+\diagram[20]{Kanban Board}
+\begin{center}
+\begin{tikzpicture}[card/.style={draw, fill=white, rounded corners=2pt, minimum width=3.3cm,
+                                 minimum height=0.8cm, font=\footnotesize}]
+    \foreach \x/\t/\c in {0/To Do/red!15, 4.2/In Progress/yellow!25, 8.4/Done/green!20} {
+        \draw[fill=\c] (\x,0) rectangle (\x+3.8,-5.2);
+        \node[font=\bfseries] at (\x+1.9,-0.4) {\t};
+    }
+    \node[card] at (1.9,-1.4) {Write alert rules};
+    \node[card] at (1.9,-2.5) {Deploy honeypot};
+    \node[card] at (6.1,-1.4) {Tune thresholds};
+    \node[card] at (10.3,-1.4) {Set up log parser};
+    \node[card] at (10.3,-2.5) {Patch OpenSSH};
+\end{tikzpicture}
 \end{center}
 
 \end{document}
